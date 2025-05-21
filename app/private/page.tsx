@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
+import {GenerateBlogButton} from "@/components/generate-blog-button";
 
 export default async function PrivatePage() {
     const supabase = await createClient()
@@ -10,5 +11,7 @@ export default async function PrivatePage() {
         redirect('/login')
     }
 
-    return <p>Hello {data.user.email}</p>
+    return (
+        <GenerateBlogButton />
+    )
 }
