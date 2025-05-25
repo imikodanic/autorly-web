@@ -50,7 +50,7 @@ export const columns: ColumnDef<Blog>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => {
-                            window.open(`/blogs/${blog.id}`, "_blank", "noopener,noreferrer");
+                            window.open(`/dashboard/blogs/${blog.id}`, "_blank", "noopener,noreferrer");
                         }}>
                             View blog
                         </DropdownMenuItem>

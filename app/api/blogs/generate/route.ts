@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import {Brand} from "@/app/dashboard/page";
+import {Brand} from "@/app/dashboard/blogs/page";
 
 
 type GenerateBlogRequestBody = {
