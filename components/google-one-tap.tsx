@@ -72,7 +72,7 @@ const OneTapComponent = () => {
         }
         initializeGoogleOneTap()
         return () => window.removeEventListener('load', initializeGoogleOneTap)
-    }, [])
+    })
 
     return (
         <>

@@ -145,7 +145,7 @@ export default function Page() {
 
     useEffect(() => {
         getBlogs();
-    }, [])
+    })
 
     return (
         <div className="container mx-auto py-10">
