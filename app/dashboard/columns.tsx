@@ -58,8 +58,6 @@ export const columns: ColumnDef<Blog>[] = [
                             onClick={() => navigator.clipboard.writeText(blog.content)}>
                             Copy content
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>Delete blog</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
