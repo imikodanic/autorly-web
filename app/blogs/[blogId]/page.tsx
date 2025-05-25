@@ -11,7 +11,7 @@ export default async function Page({ params }: { readonly params: Promise<BlogPa
 
     const supabase = await createClient();
 
-    const { data: blog, error } = await supabase
+    const { data: blog } = await supabase
         .from('Blogs')
         .select('*')
         .eq('id', blogId)
