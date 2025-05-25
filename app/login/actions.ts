@@ -25,17 +25,19 @@ export async function login(formData: FormData) {
     redirect('/')
 }
 
-export async function signup(formData: FormData) {
+export async function continueWithGoogle() {
     const supabase = await createClient()
 
-    // type-casting here for convenience
-    // in practice, you should validate your inputs
-    const data = {
-        email: formData.get('email') as string,
-        password: formData.get('password') as string,
-    }
+    console.log("wtff");
 
-    const { error } = await supabase.auth.signUp(data)
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: `/auth/confirm`,
+        },
+    })
+
+    console.error(error)
 
     if (error) {
         redirect('/error')
