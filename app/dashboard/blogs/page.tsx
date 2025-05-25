@@ -145,13 +145,13 @@ export default function Page() {
 
     useEffect(() => {
         getBlogs();
-    })
+    }, [])
 
     return (
         <div className="container mx-auto py-10">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-4xl font-semibold mb-8">Blogs</h1>
-                <Dialog>
+                <Dialog onOpenChange={() => {setBlogProgress(0)}}>
                     <DialogTrigger asChild>
                         <Button onClick={generateBlog}>Generate Blog</Button>
                     </DialogTrigger>

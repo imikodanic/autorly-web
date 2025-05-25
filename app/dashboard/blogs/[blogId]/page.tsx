@@ -22,7 +22,7 @@ export default async function Page({ params }: { readonly params: Promise<BlogPa
     }
 
     return (
-        <div className="container mx-auto py-10">
+        <div className="container mx-auto py-10 max-w-3xl">
             <h1 className="text-4xl font-semibold">{blog.title}</h1>
             <div>
                 <MDXRemote
