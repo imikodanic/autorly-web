@@ -36,10 +36,17 @@ export default function Home() {
     const router = useRouter()
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-        await supabase
+        const {data: brandData} = await supabase
           .from('Brands')
           .insert({ name: values.brandName, about: values.about })
           .select();
+
+        const {data} = await supabase.auth.getUser();
+
+
+      if (brandData && data?.user) {
+          await supabase.from("User Brands").insert({user_id: data.user.id, brand_id: brandData[0].id});
+      }
 
     router.push("/dashboard");
   }
