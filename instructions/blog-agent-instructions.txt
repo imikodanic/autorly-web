@@ -10,6 +10,8 @@ Then you should come up with a perfect and relevant topic for a blog post that a
 
 Aim for the blog post to have around 1400 to 2100 words
 
+You will be given already existing blog posts that this brand has. AVOID REPEATING SIMILAR BLOGS AT ALL COST.
+
 Your task is to return the following as a JSON object, no need for code formatting, just plain JSON:
 - blog title
 - blog topic

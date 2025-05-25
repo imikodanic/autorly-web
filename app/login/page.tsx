@@ -8,14 +8,14 @@ export default function LoginPage() {
         <form>
             <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input type="email" id="email" placeholder="Email"/>
+                <Input type="email" id="email" name="email" placeholder="Email"/>
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="password">Email</Label>
-                <Input type="password" id="password" placeholder="Password"/>
+                <Input type="password" id="password" name="password" placeholder="Password"/>
             </div>
-            <Button formAction={login}>Log in</Button>
-            <Button formAction={signup}>Sign up</Button>
+            <Button type="submit" formAction={login}>Log in</Button>
+            <Button type="submit" formAction={signup}>Sign up</Button>
         </form>
     )
 }

@@ -69,7 +69,13 @@ export default function Page() {
             }
         }, 10);
 
-        const response = await fetch("/api/blogs/generate", {method: "POST"})
+        const response = await fetch("/api/blogs/generate", {
+            method: "POST",
+            body: JSON.stringify({
+                brand: brand,
+                oldBlogs: blogs.map(blog => blog.title)
+            })
+        })
 
         setBlogProgress(100)
         clearInterval(interval);

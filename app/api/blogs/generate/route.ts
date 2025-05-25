@@ -1,7 +1,14 @@
 import OpenAI from "openai";
+import {Brand} from "@/app/dashboard/page";
 
+
+type GenerateBlogRequestBody = {
+    brand: Brand;
+    oldBlogs: string[];
+}
 
 export async function POST(request: Request) {
+    const { brand, oldBlogs } = (await request.json()) as GenerateBlogRequestBody;
     const client = new OpenAI();
 
     const response = await client.responses.create({
@@ -18,6 +25,8 @@ export async function POST(request: Request) {
             "Then you should come up with a perfect and relevant topic for a blog post that aligns with the brand's identity and target audience.\n" +
             "\n" +
             "Aim for the blog post to have around 1400 to 2100 words\n" +
+            "\n" +
+            "You will be given already existing blog posts that this brand has. AVOID REPEATING SIMILAR BLOGS AT ALL COST.\n" +
             "\n" +
             "Your task is to return the following as a JSON object, no need for code formatting, just plain JSON:\n" +
             "- blog title\n" +
@@ -36,10 +45,12 @@ export async function POST(request: Request) {
             "    \"topic\": \"Sustainable Fashion Trends\",\n" +
             "    \"content\": \"# The Future of Sustainable Fashion: Trends and Innovations\\n\\nSustainable fashion is not just a trend; it's a movement that is reshaping the industry. As consumers become more conscious of their environmental impact, brands are innovating to meet these demands. In this blog post, we will explore the latest trends and innovations in sustainable fashion.\\n\\n## 1. Eco-Friendly Materials\\nOne of the most significant trends in sustainable fashion is the use of eco-friendly materials. Brands are increasingly opting for organic cotton, recycled polyester, and other sustainable fabrics that reduce environmental impact.\\n\\n## 2. Circular Fashion\\nCircular fashion is gaining traction as brands look to create products that can be reused or recycled. This approach minimizes waste and promotes a more sustainable lifecycle for clothing.\\n\\n## 3. Ethical Production Practices\\nConsumers are demanding transparency in production practices. Brands that prioritize ethical labor practices and fair wages are becoming more popular among conscious shoppers.\\n\\n## 4. Technological Innovations\\nTechnology is playing a crucial role in sustainable fashion. From 3D printing to AI-driven design, innovations are helping brands create more efficient and sustainable products.\\n\\n## Conclusion\\nThe future of sustainable fashion looks promising with these trends and innovations leading the way. As consumers continue to prioritize sustainability, brands must adapt to stay relevant in this evolving market.\"\n" +
             "}",
-        input: "Autorly is a SaaS platform that uses large language models to automate content creation for digital marketing use cases. It is designed for early-stage startups, solo founders, small businesses, and lean marketing teams that need to publish consistent, high-quality written content but have limited time or copywriting resources. The platform generates blog posts, social media updates (e.g., LinkedIn, Twitter, Instagram), and branded content by combining AI-generated text with user-provided inputs (such as brand tone, keywords, or topic outlines). Autorly operates in the AI content automation and marketing technology (martech) industry, with a focus on delivering fast, relevant, and scalable content generation tailored to business goals.",
+        input: `
+        Brand name: ${brand.name}
+        Brand about: ${brand.about}
+        Old blog posts that MUST NOT be repeated!!: ${oldBlogs.join(", ")}
+        `,
     });
-
-    console.log(response.output_text);
 
     return Response.json({
         message: "Blog generated successfully",
