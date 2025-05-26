@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Check, ChevronsUpDown, PlusCircle } from "lucide-react"
+import * as React from "react";
+import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-import {Dialog, DialogTrigger} from "@/components/ui/dialog";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Button} from "@/components/ui/button";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     Command,
     CommandEmpty,
@@ -16,9 +16,9 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-    CommandSeparator
+    CommandSeparator,
 } from "@/components/ui/command";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const groups = [
     {
@@ -30,23 +30,20 @@ const groups = [
             },
         ],
     },
-]
+];
 
-type Team = (typeof groups)[number]["teams"][number]
+type Team = (typeof groups)[number]["teams"][number];
 
-type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
+type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
-type TeamSwitcherProps = PopoverTriggerProps
+type TeamSwitcherProps = PopoverTriggerProps;
 
 export default function BrandSwitcher({ className }: TeamSwitcherProps) {
-    const [open, setOpen] = React.useState(false)
-    const [showNewBrandDialog, setShowNewBrandDialog] = React.useState(false)
-    const [selectedBrand, setSelectedBrand] = React.useState<Team>(
-        groups[0].teams[0]
-    )
+    const [open, setOpen] = React.useState(false);
+    const [showNewBrandDialog, setShowNewBrandDialog] = React.useState(false);
+    const [selectedBrand, setSelectedBrand] = React.useState<Team>(groups[0].teams[0]);
 
-    const router = useRouter()
-
+    const router = useRouter();
 
     return (
         <Dialog open={showNewBrandDialog} onOpenChange={setShowNewBrandDialog}>
@@ -82,8 +79,8 @@ export default function BrandSwitcher({ className }: TeamSwitcherProps) {
                                         <CommandItem
                                             key={team.value}
                                             onSelect={() => {
-                                                setSelectedBrand(team)
-                                                setOpen(false)
+                                                setSelectedBrand(team);
+                                                setOpen(false);
                                             }}
                                             className="text-sm"
                                         >
@@ -115,7 +112,7 @@ export default function BrandSwitcher({ className }: TeamSwitcherProps) {
                                 <DialogTrigger asChild>
                                     <CommandItem
                                         onSelect={() => {
-                                            router.push("/new-brand")
+                                            router.push("/new-brand");
                                         }}
                                     >
                                         <PlusCircle className="h-5 w-5" />
@@ -128,5 +125,5 @@ export default function BrandSwitcher({ className }: TeamSwitcherProps) {
                 </PopoverContent>
             </Popover>
         </Dialog>
-    )
+    );
 }

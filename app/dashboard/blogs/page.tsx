@@ -1,35 +1,35 @@
 "use client";
 
-import { Blog, columns } from "./columns"
-import { DataTable } from "./data-table"
-import {Button} from "@/components/ui/button";
-import {redirect} from "next/navigation";
-import {createClient} from "@/utils/supabase/client";
-import {useEffect, useState} from "react";
+import { Blog, columns } from "./columns";
+import { DataTable } from "./data-table";
+import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogTrigger,
 } from "@/components/ui/dialog";
-import {Progress} from "@/components/ui/progress";
+import { Progress } from "@/components/ui/progress";
 
 export type Brand = {
-    id: string
-    name: string
-    about: string
-}
+    id: string;
+    name: string;
+    about: string;
+};
 
 export default function Page() {
-    const supabase = createClient()
-    const [brand, setBrand] = useState<Brand | null>(null)
-    const [blogs, setBlogs] = useState<Blog[]>([])
+    const supabase = createClient();
+    const [brand, setBrand] = useState<Brand | null>(null);
+    const [blogs, setBlogs] = useState<Blog[]>([]);
     const [blogProgress, setBlogProgress] = useState<number>(0);
 
     async function getBlogs() {
-        const brandData = await getUserBrand() as unknown as Brand;
+        const brandData = (await getUserBrand()) as unknown as Brand;
         if (!brandData) {
             console.error("Brand is not set");
             return;
@@ -40,7 +40,7 @@ export default function Page() {
         const { data, error } = await supabase
             .from("Blogs")
             .select("*")
-            .eq("brand_id", brandData.id)
+            .eq("brand_id", brandData.id);
 
         if (error) {
             console.error("Failed to fetch blogs:", error);
@@ -73,11 +73,11 @@ export default function Page() {
             method: "POST",
             body: JSON.stringify({
                 brand: brand,
-                oldBlogs: blogs.map(blog => blog.title)
-            })
-        })
+                oldBlogs: blogs.map((blog) => blog.title),
+            }),
+        });
 
-        setBlogProgress(100)
+        setBlogProgress(100);
         clearInterval(interval);
 
         const { data } = await response.json();
@@ -86,24 +86,24 @@ export default function Page() {
             return;
         }
 
-        const formattedData: Blog = JSON.parse(data)
+        const formattedData: Blog = JSON.parse(data);
 
         const { data: blogData } = await supabase
             .from("Blogs")
             .insert({
                 title: formattedData.title,
-                topic:formattedData.topic,
+                topic: formattedData.topic,
                 content: formattedData.content,
-                brand_id: brand.id
+                brand_id: brand.id,
             })
-            .select()
+            .select();
 
         if (!blogData || blogData.length === 0) {
             console.error("Failed to insert the blog into the database");
             return;
         }
 
-        setBlogs(prevBlogs => [
+        setBlogs((prevBlogs) => [
             ...prevBlogs,
             {
                 id: blogData[0].id,
@@ -111,47 +111,57 @@ export default function Page() {
                 topic: blogData[0].topic,
                 content: blogData[0].content,
                 created_at: new Date(blogData[0].created_at).toLocaleDateString("hr"),
-            }
-        ])
+            },
+        ]);
     }
 
     async function getUser() {
-        const {data, error} = await supabase.auth.getUser()
+        const { data, error } = await supabase.auth.getUser();
         if (error || !data?.user) {
-            redirect('/login')
+            redirect("/login");
         }
 
-        return data.user
+        return data.user;
     }
 
     async function getUserBrand() {
-        const user = await getUser()
+        const user = await getUser();
 
-        const { data } = await supabase.from('User Brands').select(`
+        const { data } = await supabase
+            .from("User Brands")
+            .select(
+                `
       id,
       Brands (
         id,
         name,
         about
       )
-    `).eq('user_id', user.id).single()
+    `
+            )
+            .eq("user_id", user.id)
+            .single();
 
         if (data?.Brands) {
             return data?.Brands;
         }
 
-        redirect('/new-brand')
+        redirect("/new-brand");
     }
 
     useEffect(() => {
         getBlogs();
-    }, [])
+    }, []);
 
     return (
         <div className="container mx-auto py-10">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-4xl font-semibold mb-8">Blogs</h1>
-                <Dialog onOpenChange={() => {setBlogProgress(0)}}>
+                <Dialog
+                    onOpenChange={() => {
+                        setBlogProgress(0);
+                    }}
+                >
                     <DialogTrigger asChild>
                         <Button onClick={generateBlog}>Generate Blog</Button>
                     </DialogTrigger>
@@ -159,18 +169,16 @@ export default function Page() {
                         <DialogHeader>
                             <DialogTitle>Generating your new blog</DialogTitle>
                             <DialogDescription>
-                                {
-                                    blogProgress === 100
-                                        ? "Your blog has been generated successfully! Check it out in the table below."
-                                        : "Your blog will be created shortly, sit tight and let Autorly do the rest!"
-                                }
+                                {blogProgress === 100
+                                    ? "Your blog has been generated successfully! Check it out in the table below."
+                                    : "Your blog will be created shortly, sit tight and let Autorly do the rest!"}
                             </DialogDescription>
                         </DialogHeader>
                         <Progress value={blogProgress} className="w-full mt-10 h-5" />
                     </DialogContent>
                 </Dialog>
             </div>
-            <DataTable columns={columns} data={blogs}/>
+            <DataTable columns={columns} data={blogs} />
         </div>
-    )
+    );
 }

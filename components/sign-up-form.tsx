@@ -1,16 +1,13 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Image from "next/image";
-import {signup} from "@/app/sign-up/actions";
+import { signup } from "@/app/sign-up/actions";
 
-export function SignUpForm({
-                              className,
-                              ...props
-                          }: React.ComponentProps<"div">) {
+export function SignUpForm({ className, ...props }: React.ComponentProps<"div">) {
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card className="overflow-hidden">
@@ -102,9 +99,9 @@ export function SignUpForm({
                 </CardContent>
             </Card>
             <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-                By clicking sign up, you agree to our <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
+                By clicking sign up, you agree to our <a href="#">Terms of Service</a> and{" "}
+                <a href="#">Privacy Policy</a>.
             </div>
         </div>
-    )
+    );
 }

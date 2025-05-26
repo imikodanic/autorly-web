@@ -10,28 +10,13 @@ export const mdxComponents: MDXComponents = {
         </h2>
     ),
     h3: ({ children, id }) => (
-        <h3
-            id={id as string}
-            className="font-poppins mt-4 mb-2 text-[22px]"
-        >
+        <h3 id={id as string} className="font-poppins mt-4 mb-2 text-[22px]">
             {children}
         </h3>
     ),
-    p: ({ children }) => (
-        <p className="text-darkElement-500 leading-[22px]">
-            {children}
-        </p>
-    ),
-    ul: ({ children }) => (
-        <ul className="list-disc text-darkElement-250 pl-6">
-            {children}
-        </ul>
-    ),
-    li: ({ children }) => (
-        <li className="text-darkElement-400 leading-[22px] mb-2">
-            {children}
-        </li>
-    ),
+    p: ({ children }) => <p className="text-darkElement-500 leading-[22px]">{children}</p>,
+    ul: ({ children }) => <ul className="list-disc text-darkElement-250 pl-6">{children}</ul>,
+    li: ({ children }) => <li className="text-darkElement-400 leading-[22px] mb-2">{children}</li>,
     a: ({ children, href }) => (
         <a
             href={href as string}
