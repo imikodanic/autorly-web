@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Autorly Web
+
+Autorly Web is a Next.js application that lets you automatically generate SEO-friendly blog posts for your brand. The app integrates Supabase for authentication and data storage and uses OpenAI to create unique blog content.
+
+## Features
+
+- **User authentication** powered by Supabase.
+- **Brand workspace** setup so the AI can learn about your business.
+- **AI blog generation** using the OpenAI API with customizable prompts.
+- **Dashboard** for managing generated blogs.
+- **Tailwind CSS** and **Radix UI** components for a modern interface.
+- Prettier and ESLint configurations for consistent code style.
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies using [pnpm](https://pnpm.io) (or npm/yarn):
+   ```bash
+   pnpm install
+   ```
+2. Copy `.env-example` to `.env.local` and provide the required keys:
+   ```text
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   OPENAI_API_KEY=your-openai-key
+   NEXT_PUBLIC_GOOGLE_CLIENT_ID=google-oauth-client-id
+   ```
+3. Run the development server:
+   ```bash
+   pnpm dev
+   ```
+   The app will be available at [http://localhost:3000](http://localhost:3000).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Project Structure
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `app/` – Next.js routes and pages.
+- `components/` – Reusable UI components and forms.
+- `utils/` – Supabase helpers and other utilities.
+- `lib/` – Shared helper functions.
+- `public/` – Static assets such as icons and logos.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `pnpm dev` – start the development server.
+- `pnpm build` – build the application for production.
+- `pnpm start` – run the production build.
+- `pnpm lint` – run ESLint.
+- `pnpm format` – run Prettier on the codebase.
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+This project is designed to be easily deployed on platforms such as Vercel. After setting up environment variables in your hosting provider, run the production build and start the server with `pnpm build && pnpm start`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Autorly Web aims to streamline content creation for marketing teams by combining AI-powered generation with a simple brand-focused workflow.
