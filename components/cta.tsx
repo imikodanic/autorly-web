@@ -1,7 +1,7 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function LandingPageCta() {
+export function CTA() {
     return (
         <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700">
             <div className="container mx-auto px-4">
@@ -12,8 +12,8 @@ export function LandingPageCta() {
                     </h2>
 
                     <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                        Join professionals who&#39;ve transformed their LinkedIn presence. Start
-                        your free trial today and see results in just 7 days.
+                        Join our early access program and be among the first to experience
+                        AI-powered LinkedIn automation. Limited beta spots available.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -22,29 +22,29 @@ export function LandingPageCta() {
                             className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-6"
                         >
                             <Sparkles className="mr-2 h-5 w-5" />
-                            Start Free Trial
+                            Join Beta Program
                             <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
 
                         <div className="text-blue-200 text-sm">
-                            No credit card required • 14-day free trial
+                            No credit card required • Early access pricing
                         </div>
                     </div>
 
-                    {/*<div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">*/}
-                    {/*    <div>*/}
-                    {/*        <div className="text-3xl font-bold text-blue-200">10,000+</div>*/}
-                    {/*        <div className="text-blue-100">Active Users</div>*/}
-                    {/*    </div>*/}
-                    {/*    <div>*/}
-                    {/*        <div className="text-3xl font-bold text-blue-200">2M+</div>*/}
-                    {/*        <div className="text-blue-100">Posts Generated</div>*/}
-                    {/*    </div>*/}
-                    {/*    <div>*/}
-                    {/*        <div className="text-3xl font-bold text-blue-200">95%</div>*/}
-                    {/*        <div className="text-blue-100">Customer Satisfaction</div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
+                    <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                        <div>
+                            <div className="text-3xl font-bold text-blue-200">Beta</div>
+                            <div className="text-blue-100">Early Access Program</div>
+                        </div>
+                        <div>
+                            <div className="text-3xl font-bold text-blue-200">AI-Powered</div>
+                            <div className="text-blue-100">Content Generation</div>
+                        </div>
+                        <div>
+                            <div className="text-3xl font-bold text-blue-200">24/7</div>
+                            <div className="text-blue-100">Automated Posting</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

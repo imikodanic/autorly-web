@@ -95,7 +95,7 @@ export function Hero() {
                                             alt="Autorly"
                                             width={32}
                                             height={32}
-                                            className="w-24 h-auto"
+                                            className="w-20 h-auto"
                                         />
                                     </div>
                                 </div>

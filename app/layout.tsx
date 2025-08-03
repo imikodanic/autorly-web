@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
     title: "Autorly",
-    description: "Autorly, create content faster with AI",
+    description: "Autorly, Your Content, On Autopilot",
 };
 
 export default function RootLayout({

@@ -89,21 +89,12 @@ export function Header() {
                             >
                                 Pricing
                             </Link>
-                            <Link
-                                href="#testimonials"
-                                className="text-gray-600 hover:text-blue-600 transition-colors"
-                            >
-                                Reviews
-                            </Link>
                             <div className="flex flex-col gap-2 mt-4">
-                                <Button asChild variant="outline" className="w-full bg-transparent">
-                                    <Link href="/login">Login</Link>
+                                <Button variant="outline" className="w-full bg-transparent">
+                                    Sign In
                                 </Button>
-                                <Button
-                                    asChild
-                                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700"
-                                >
-                                    <Link href="/sign-up">Start Free Trial</Link>
+                                <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700">
+                                    Start Free Trial
                                 </Button>
                             </div>
                         </nav>
