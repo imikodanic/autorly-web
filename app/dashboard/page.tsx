@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
-
 export default function DashboardPage() {
-    redirect("/dashboard/blogs");
+    return (
+        <div>
+            <h1>Autorly Dashboard</h1>
+        </div>
+    );
 }

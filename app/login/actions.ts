@@ -28,8 +28,6 @@ export async function login(formData: FormData) {
 export async function continueWithGoogle() {
     const supabase = await createClient();
 
-    console.log("wtff");
-
     const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {

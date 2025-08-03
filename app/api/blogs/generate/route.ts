@@ -1,13 +1,7 @@
 import OpenAI from "openai";
-import { Brand } from "@/app/dashboard/blogs/page";
-
-type GenerateBlogRequestBody = {
-    brand: Brand;
-    oldBlogs: string[];
-};
 
 export async function POST(request: Request) {
-    const { brand, oldBlogs } = (await request.json()) as GenerateBlogRequestBody;
+    const { brand, oldBlogs } = await request.json();
     const client = new OpenAI();
 
     const response = await client.responses.create({

@@ -8,26 +8,5 @@ export default async function RootPage() {
         redirect("/login");
     }
 
-    const { user } = data;
-
-    const { data: brandData } = await supabase
-        .from("User Brands")
-        .select(
-            `
-      id,
-      Brands (
-        id,
-        name,
-        about
-      )
-    `
-        )
-        .eq("user_id", user.id)
-        .single();
-
-    if (brandData?.Brands) {
-        redirect(`/dashboard/blogs`);
-    }
-
-    redirect("/new-brand");
+    redirect(`/dashboard`);
 }
