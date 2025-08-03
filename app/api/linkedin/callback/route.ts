@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
     return Response.json({ status: 200, account: linkedinAccount });
 }
 
-export async function getUserInfo(accessToken: string): Promise<UserInfo> {
+async function getUserInfo(accessToken: string): Promise<UserInfo> {
     const res = await fetch("https://api.linkedin.com/v2/userinfo", {
         headers: {
             Authorization: `Bearer ${accessToken}`,
