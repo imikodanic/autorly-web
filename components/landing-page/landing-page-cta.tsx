@@ -1,6 +1,5 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 export function LandingPageCta() {
     return (

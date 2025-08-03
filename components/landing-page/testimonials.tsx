@@ -71,8 +71,8 @@ export function Testimonials() {
                         </span>
                     </h2>
                     <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Join thousands of professionals who've transformed their LinkedIn presence
-                        with Autorly.
+                        Join thousands of professionals who&#39;ve transformed their LinkedIn
+                        presence with Autorly.
                     </p>
                 </div>
 
@@ -95,7 +95,7 @@ export function Testimonials() {
                                 <Quote className="h-8 w-8 text-blue-200 mb-4" />
 
                                 <p className="text-gray-700 mb-6 leading-relaxed">
-                                    "{testimonial.content}"
+                                    &#34;{testimonial.content}&#34;
                                 </p>
 
                                 <div className="flex items-center gap-3">
