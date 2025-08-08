@@ -1,28 +1,16 @@
 "use client";
 
-import {
-    Home,
-    Calendar,
-    BarChart3,
-    Settings,
-    User,
-    Plus,
-    Clock,
-    TrendingUp,
-    LogOut,
-} from "lucide-react";
+import { Home, Calendar, BarChart3, Settings, User, LogOut } from "lucide-react";
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarSeparator,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -54,21 +42,6 @@ const menuItems = [
     },
 ];
 
-const quickActions = [
-    {
-        title: "Generate Post",
-        icon: Plus,
-    },
-    {
-        title: "Schedule Post",
-        icon: Clock,
-    },
-    {
-        title: "View Analytics",
-        icon: TrendingUp,
-    },
-];
-
 export function AppSidebar() {
     const router = useRouter();
 
@@ -88,7 +61,6 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Navigation</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {menuItems.map((item) => (
@@ -123,9 +95,9 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
 
-                <SidebarSeparator />
+                {/* <SidebarSeparator /> */}
 
-                <SidebarGroup>
+                {/* <SidebarGroup>
                     <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
@@ -139,7 +111,7 @@ export function AppSidebar() {
                             ))}
                         </SidebarMenu>
                     </SidebarGroupContent>
-                </SidebarGroup>
+                </SidebarGroup> */}
             </SidebarContent>
 
             <SidebarFooter className="border-t border-sidebar-border">
