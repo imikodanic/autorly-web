@@ -48,11 +48,14 @@ export function Header() {
 
                     {/* Desktop CTA */}
                     <div className="hidden md:flex items-center gap-4">
-                        <Button variant="ghost" className="text-gray-600">
-                            Sign In
+                        <Button asChild variant="ghost" className="text-gray-600">
+                            <Link href="/login">Login</Link>
                         </Button>
-                        <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
-                            Start Free Trial
+                        <Button
+                            asChild
+                            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                        >
+                            <Link href="/sign-up">Start for Free</Link>
                         </Button>
                     </div>
 
