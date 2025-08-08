@@ -1,12 +1,8 @@
-import { ExternalLink, Linkedin, TrendingUp, Calendar, Target, Palette } from "lucide-react";
+import { Linkedin, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
     Select,
     SelectContent,
@@ -16,12 +12,25 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { ProfileStats } from "@/components/profile-stats";
-import { ContentThemes } from "@/components/content-themes";
-import { PostingPatterns } from "@/components/posting-patterns";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getLinkedinAuthURL } from "@/utils/linkedin/get-auth-url";
+import { ContentPreferences } from "@/components/profile/content-preferences";
+import { DisconnectLinkedInDialog } from "@/components/profile/disconnect-linkedin-dialog";
+
+export type ProfileData = {
+    picture: string;
+    name: string;
+    headline: string;
+    bio: string;
+    industry: string;
+    location: string;
+    company: string;
+    experience: string;
+    targetAudience: string;
+    contentFocus: string[];
+};
 
 export default async function ProfilePage() {
     const supabase = await createClient();
@@ -40,10 +49,9 @@ export default async function ProfilePage() {
         .eq("user_id", user.id)
         .single();
 
-    const isEditing = false;
     const isConnected = !!linkedinAccount;
 
-    const profileData = {
+    const profileData: ProfileData = {
         picture: linkedinAccount?.avatar_url,
         name: linkedinAccount?.display_name,
         headline: "Headline",
@@ -72,13 +80,34 @@ export default async function ProfilePage() {
                 {/* Left Column - Profile Info */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* LinkedIn Connection Status */}
-                    <Card>
+                    <Card className="gap-2">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Linkedin className="h-5 w-5 text-blue-600" />
                                 LinkedIn Connection
                             </CardTitle>
                         </CardHeader>
+                        <CardContent>
+                            <div className="border rounded-lg p-4 bg-white">
+                                <div className="flex items-start gap-3">
+                                    <div className="relative">
+                                        <Avatar className="h-12 w-12">
+                                            <AvatarImage src={profileData.picture} />
+                                            <AvatarFallback>AJ</AvatarFallback>
+                                        </Avatar>
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold">{profileData.name}</h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            {profileData.headline}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {profileData.company} • {profileData.location}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
                         <CardContent>
                             {isConnected ? (
                                 <div className="flex items-center justify-between">
@@ -88,9 +117,7 @@ export default async function ProfilePage() {
                                         {/*<Badge variant="secondary">Active</Badge>*/}
                                     </div>
                                     <div className="flex gap-2">
-                                        <Button variant="outline" size="sm">
-                                            Disconnect
-                                        </Button>
+                                        <DisconnectLinkedInDialog />
                                     </div>
                                 </div>
                             ) : (
@@ -113,204 +140,12 @@ export default async function ProfilePage() {
                             )}
                         </CardContent>
                     </Card>
-
-                    {/* Profile Preview */}
-                    {isConnected && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Your Profile</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="border rounded-lg p-4 bg-white">
-                                    <div className="flex items-start gap-3">
-                                        <div className="relative">
-                                            <Avatar className="h-12 w-12">
-                                                <AvatarImage src={profileData.picture} />
-                                                <AvatarFallback>AJ</AvatarFallback>
-                                            </Avatar>
-                                        </div>
-                                        <div className="flex-1">
-                                            <h3 className="font-semibold">{profileData.name}</h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                {profileData.headline}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {profileData.company} • {profileData.location}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )}
-
                     {/* Content Preferences */}
-                    <Tabs defaultValue="preferences" className="space-y-4">
-                        <TabsList className="grid w-full grid-cols-3">
-                            <TabsTrigger value="preferences">Content Preferences</TabsTrigger>
-                            <TabsTrigger value="themes">Content Themes</TabsTrigger>
-                            <TabsTrigger value="patterns">Posting Patterns</TabsTrigger>
-                        </TabsList>
-
-                        <TabsContent value="preferences" className="space-y-4">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <Target className="h-5 w-5" />
-                                        Content Preferences
-                                    </CardTitle>
-                                    <CardDescription>
-                                        Help AI generate more relevant content for your audience
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-6">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label>Industry</Label>
-                                            {isEditing ? (
-                                                <Select value={profileData.industry}>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="Technology">
-                                                            Technology
-                                                        </SelectItem>
-                                                        <SelectItem value="Finance">
-                                                            Finance
-                                                        </SelectItem>
-                                                        <SelectItem value="Healthcare">
-                                                            Healthcare
-                                                        </SelectItem>
-                                                        <SelectItem value="Marketing">
-                                                            Marketing
-                                                        </SelectItem>
-                                                        <SelectItem value="Consulting">
-                                                            Consulting
-                                                        </SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            ) : (
-                                                <p className="text-sm bg-muted p-2 rounded">
-                                                    {profileData.industry}
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label>Experience Level</Label>
-                                            {isEditing ? (
-                                                <Select value={profileData.experience}>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="0-2 years">
-                                                            0-2 years
-                                                        </SelectItem>
-                                                        <SelectItem value="3-5 years">
-                                                            3-5 years
-                                                        </SelectItem>
-                                                        <SelectItem value="5+ years">
-                                                            5+ years
-                                                        </SelectItem>
-                                                        <SelectItem value="10+ years">
-                                                            10+ years
-                                                        </SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            ) : (
-                                                <p className="text-sm bg-muted p-2 rounded">
-                                                    {profileData.experience}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label>Professional Bio</Label>
-                                        {isEditing ? (
-                                            <Textarea
-                                                value={profileData.bio}
-                                                onChange={(e) =>
-                                                    console.log({
-                                                        ...profileData,
-                                                        bio: e.target.value,
-                                                    })
-                                                }
-                                                rows={4}
-                                                placeholder="Tell us about your professional background and expertise..."
-                                            />
-                                        ) : (
-                                            <p className="text-sm bg-muted p-3 rounded leading-relaxed">
-                                                {profileData.bio}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label>Target Audience</Label>
-                                        {isEditing ? (
-                                            <Input
-                                                value={profileData.targetAudience}
-                                                onChange={(e) =>
-                                                    console.log({
-                                                        ...profileData,
-                                                        targetAudience: e.target.value,
-                                                    })
-                                                }
-                                                placeholder="e.g., Product Managers, Entrepreneurs, Tech Leaders"
-                                            />
-                                        ) : (
-                                            <p className="text-sm bg-muted p-2 rounded">
-                                                {profileData.targetAudience}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <Label>Content Focus Areas</Label>
-                                        <div className="flex flex-wrap gap-2">
-                                            {profileData.contentFocus.map((focus, index) => (
-                                                <Badge
-                                                    key={index}
-                                                    variant="secondary"
-                                                    className="text-xs"
-                                                >
-                                                    {focus}
-                                                    {isEditing && (
-                                                        <span className="ml-1 cursor-pointer">
-                                                            ×
-                                                        </span>
-                                                    )}
-                                                </Badge>
-                                            ))}
-                                            {isEditing && (
-                                                <Badge variant="outline" className="cursor-pointer">
-                                                    + Add Focus Area
-                                                </Badge>
-                                            )}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </TabsContent>
-
-                        <TabsContent value="themes">
-                            <ContentThemes />
-                        </TabsContent>
-
-                        <TabsContent value="patterns">
-                            <PostingPatterns />
-                        </TabsContent>
-                    </Tabs>
+                    <ContentPreferences profileData={profileData} />
                 </div>
 
                 {/* Right Column - Stats & Settings */}
                 <div className="space-y-6">
-                    <ProfileStats />
-
-                    {/* Brand Voice Settings */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -357,36 +192,7 @@ export default async function ProfilePage() {
                             </div>
                         </CardContent>
                     </Card>
-
-                    {/* Quick Actions */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Quick Actions</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <Button
-                                variant="outline"
-                                className="w-full justify-start bg-transparent"
-                            >
-                                <ExternalLink className="mr-2 h-4 w-4" />
-                                View LinkedIn Profile
-                            </Button>
-                            <Button
-                                variant="outline"
-                                className="w-full justify-start bg-transparent"
-                            >
-                                <TrendingUp className="mr-2 h-4 w-4" />
-                                Export Analytics
-                            </Button>
-                            <Button
-                                variant="outline"
-                                className="w-full justify-start bg-transparent"
-                            >
-                                <Calendar className="mr-2 h-4 w-4" />
-                                Content Calendar
-                            </Button>
-                        </CardContent>
-                    </Card>
+                    <ProfileStats />
                 </div>
             </div>
         </div>
