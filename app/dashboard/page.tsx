@@ -8,6 +8,8 @@ import { PostCard } from "@/components/post-card";
 import { GeneratePostDialog } from "@/components/generate-post-dialog";
 import { SchedulePostDialog } from "@/components/schedule-post-dialog";
 import { StatsOverview } from "@/components/stats-overview";
+import { useMe } from "@/lib/api/me/hook";
+import { LinkedInNotConnectedState } from "@/components/linkedin-not-connected-state";
 
 // Mock data for posts
 const mockPosts = [
@@ -77,6 +79,12 @@ export default function DashboardPage() {
     const publishedPosts = posts.filter((post) => post.status === "published");
     const scheduledPosts = posts.filter((post) => post.status === "scheduled");
     const draftPosts = posts.filter((post) => post.status === "draft");
+
+    const { data: me } = useMe();
+
+    if (!me?.linkedinAccount) {
+        return <LinkedInNotConnectedState />;
+    }
 
     return (
         <div className="flex-1 space-y-6 p-6">

@@ -18,19 +18,7 @@ import Link from "next/link";
 import { getLinkedinAuthURL } from "@/utils/linkedin/get-auth-url";
 import { ContentPreferences } from "@/components/profile/content-preferences";
 import { DisconnectLinkedInDialog } from "@/components/profile/disconnect-linkedin-dialog";
-
-export type ProfileData = {
-    picture: string;
-    name: string;
-    headline: string;
-    bio: string;
-    industry: string;
-    location: string;
-    company: string;
-    experience: string;
-    targetAudience: string;
-    contentFocus: string[];
-};
+import { Profile } from "@/lib/api/profile/model";
 
 export default async function ProfilePage() {
     const supabase = await createClient();
@@ -51,7 +39,8 @@ export default async function ProfilePage() {
 
     const isConnected = !!linkedinAccount;
 
-    const profileData: ProfileData = {
+    const profileData: Profile = {
+        id: "asd",
         picture: linkedinAccount?.avatar_url,
         name: linkedinAccount?.display_name,
         headline: "Headline",
