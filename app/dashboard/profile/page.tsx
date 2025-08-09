@@ -120,7 +120,7 @@ export default async function ProfilePage() {
                                         tracking your posts
                                     </p>
                                     <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                                        <Link href={getLinkedinAuthURL()} target="_blank">
+                                        <Link href={getLinkedinAuthURL()}>
                                             <Linkedin className="mr-2 h-4 w-4" />
                                             Connect LinkedIn
                                         </Link>

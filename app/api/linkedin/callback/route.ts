@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export type UserInfo = {
     sub: string;
@@ -39,9 +40,9 @@ export async function GET(req: NextRequest) {
 
     const userInfo = await getUserInfo(access_token);
 
-    const linkedinAccount = await saveLinkedinAccountToDatabase(userInfo, access_token, expires_in);
+    await saveLinkedinAccountToDatabase(userInfo, access_token, expires_in);
 
-    return Response.json({ status: 200, account: linkedinAccount });
+    return redirect("/dashboard/profile");
 }
 
 async function getUserInfo(accessToken: string): Promise<UserInfo> {
