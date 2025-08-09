@@ -1,3 +1,5 @@
+"use client";
+
 import { Linkedin, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,37 +14,24 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { ProfileStats } from "@/components/profile-stats";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getLinkedinAuthURL } from "@/utils/linkedin/get-auth-url";
 import { ContentPreferences } from "@/components/profile/content-preferences";
 import { DisconnectLinkedInDialog } from "@/components/profile/disconnect-linkedin-dialog";
 import { Profile } from "@/lib/api/profile/model";
+import { useMe } from "@/lib/api/me/hook";
 
-export default async function ProfilePage() {
-    const supabase = await createClient();
-    const {
-        data: { user },
-        error: authError,
-    } = await supabase.auth.getUser();
+export default function ProfilePage() {
+    const { data: me } = useMe();
 
-    if (authError || !user) {
-        redirect("/login");
-    }
+    if (!me) return null;
 
-    const { data: linkedinAccount } = await supabase
-        .from("linkedin_accounts")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
-
-    const isConnected = !!linkedinAccount;
+    const isConnected = !!me.linkedinAccount;
 
     const profileData: Profile = {
         id: "asd",
-        picture: linkedinAccount?.avatar_url,
-        name: linkedinAccount?.display_name,
+        picture: me.linkedinAccount?.avatar_url,
+        name: me.linkedinAccount?.display_name,
         headline: "Headline",
         bio: "Some detailed bio about the user, highlighting their expertise and professional background.",
         industry: "Industry",
@@ -77,25 +66,27 @@ export default async function ProfilePage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="border rounded-lg p-4 bg-white">
-                                <div className="flex items-start gap-3">
-                                    <div className="relative">
-                                        <Avatar className="h-12 w-12">
-                                            <AvatarImage src={profileData.picture} />
-                                            <AvatarFallback>AJ</AvatarFallback>
-                                        </Avatar>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="font-semibold">{profileData.name}</h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            {profileData.headline}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {profileData.company} • {profileData.location}
-                                        </p>
+                            {isConnected && (
+                                <div className="border rounded-lg p-4 bg-white">
+                                    <div className="flex items-start gap-3">
+                                        <div className="relative">
+                                            <Avatar className="h-12 w-12">
+                                                <AvatarImage src={profileData.picture} />
+                                                <AvatarFallback>AJ</AvatarFallback>
+                                            </Avatar>
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="font-semibold">{profileData.name}</h3>
+                                            <p className="text-sm text-muted-foreground">
+                                                {profileData.headline}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {profileData.company} • {profileData.location}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </CardContent>
                         <CardContent>
                             {isConnected ? (

@@ -1,5 +1,5 @@
 import { useSupabase } from "@/app/providers";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "./queryKeys";
 
 export function useMe() {
@@ -19,6 +19,27 @@ export function useMe() {
             if (!data.user) return null;
 
             return { ...data.user, linkedinAccount };
+        },
+    });
+}
+
+export function useDisconnectLinkedin() {
+    const supabase = useSupabase();
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: async () => {
+            const { data, error: userError } = await supabase.auth.getUser();
+            if (userError) throw userError;
+
+            const { error } = await supabase
+                .from("linkedin_accounts")
+                .delete()
+                .eq("user_id", data.user.id);
+            if (error) throw error;
+            return data.user.id;
+        },
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: qk.me });
         },
     });
 }

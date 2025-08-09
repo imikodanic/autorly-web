@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Linkedin, X } from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -11,40 +11,23 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { useDisconnectLinkedin } from "@/lib/api/me/hook";
 
-interface DisconnectLinkedInDialogProps {
-    onConfirmDisconnect?: () => void;
-    userProfile?: {
-        name: string;
-        email: string;
-    };
-}
-
-export function DisconnectLinkedInDialog({
-    // onConfirmDisconnect,
-    userProfile = { name: "Alex Johnson", email: "alex.johnson@example.com" },
-}: DisconnectLinkedInDialogProps) {
+export function DisconnectLinkedInDialog() {
     const [open, setOpen] = useState(false);
 
     const [isDisconnecting, setIsDisconnecting] = useState(false);
-    const [confirmationChecked, setConfirmationChecked] = useState(false);
+
+    const disconnectLinkedin = useDisconnectLinkedin();
 
     const handleDisconnect = async () => {
         setIsDisconnecting(true);
 
-        // Simulate disconnect process
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        disconnectLinkedin.mutate();
 
-        // onConfirmDisconnect();
         setIsDisconnecting(false);
-        setConfirmationChecked(false);
-    };
-
-    const handleCancel = () => {
-        setConfirmationChecked(false);
+        setOpen(false);
     };
 
     const consequences = [
@@ -89,17 +72,6 @@ export function DisconnectLinkedInDialog({
                 </DialogHeader>
 
                 <div className="space-y-6">
-                    {/* Current Connection Info */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div className="flex items-center gap-3">
-                            <Linkedin className="h-8 w-8 text-blue-600" />
-                            <div>
-                                <p className="font-medium text-blue-900">{userProfile.name}</p>
-                                <p className="text-sm text-blue-700">{userProfile.email}</p>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Warning Alert */}
                     <Alert className="border-orange-200 bg-orange-50">
                         <AlertTriangle className="h-4 w-4 text-orange-600" />
@@ -129,26 +101,10 @@ export function DisconnectLinkedInDialog({
                         </div>
                     </div>
 
-                    {/* Confirmation Checkbox */}
-                    <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
-                        <Checkbox
-                            id="confirm-disconnect"
-                            checked={confirmationChecked}
-                            onCheckedChange={(checked) =>
-                                setConfirmationChecked(checked as boolean)
-                            }
-                        />
-                        <Label htmlFor="confirm-disconnect" className="text-sm leading-relaxed">
-                            I understand the consequences and want to disconnect my LinkedIn
-                            account. I can reconnect later if needed.
-                        </Label>
-                    </div>
-
-                    {/* Action Buttons */}
                     <div className="flex gap-3">
                         <Button
+                            onClick={() => setOpen(false)}
                             variant="outline"
-                            onClick={handleCancel}
                             disabled={isDisconnecting}
                             className="flex-1 bg-transparent"
                         >
@@ -156,7 +112,7 @@ export function DisconnectLinkedInDialog({
                         </Button>
                         <Button
                             onClick={handleDisconnect}
-                            disabled={!confirmationChecked || isDisconnecting}
+                            disabled={isDisconnecting}
                             className="flex-1 bg-red-600 hover:bg-red-700"
                         >
                             {isDisconnecting ? (

@@ -83,10 +83,10 @@ export function AppSidebar() {
                                                 </Badge>
                                             </div>
                                         ) : (
-                                            <a href={item.url}>
+                                            <Link href={item.url}>
                                                 <item.icon />
                                                 <span>{item.title}</span>
-                                            </a>
+                                            </Link>
                                         )}
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
@@ -119,13 +119,17 @@ export function AppSidebar() {
                     <SidebarMenuItem>
                         <SidebarMenuButton>
                             <User />
-                            <Link href="/dashboard/profile">Profile</Link>
+                            <Link href="/dashboard/profile" className="w-full">
+                                Profile
+                            </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                         <SidebarMenuButton>
                             <Settings />
-                            <Link href="/dashboard/settings">Settings</Link>
+                            <Link href="/dashboard/settings" className="w-full">
+                                Settings
+                            </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
