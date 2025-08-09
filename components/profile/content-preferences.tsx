@@ -10,11 +10,11 @@ import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { ContentThemes } from "../content-themes";
 import { PostingPatterns } from "../posting-patterns";
-import { ProfileData } from "@/app/dashboard/profile/page";
 import { AddFocusAreaDialog } from "./add-focus-area-dialog";
+import { Profile } from "@/lib/api/profile/model";
 
 type ContentPreferencesProperties = {
-    profileData: ProfileData;
+    profileData: Profile;
 };
 
 export function ContentPreferences({ profileData }: ContentPreferencesProperties) {
