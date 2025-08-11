@@ -94,7 +94,7 @@ export function Header() {
                             </Link>
                             <div className="flex flex-col gap-2 mt-4">
                                 <Button variant="outline" className="w-full bg-transparent">
-                                    Sign In
+                                    Login
                                 </Button>
                                 <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700">
                                     Start Free Trial

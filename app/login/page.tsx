@@ -34,12 +34,12 @@ export default function LoginPage() {
                         />
                     </Link>
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
-                    <p className="text-gray-600">Sign in to your account to continue</p>
+                    <p className="text-gray-600">Login to your account to continue</p>
                 </div>
 
                 <Card className="border-0 shadow-xl">
                     <CardHeader className="space-y-1 pb-6">
-                        <CardTitle className="text-2xl text-center">Sign In</CardTitle>
+                        <CardTitle className="text-2xl text-center">Login</CardTitle>
                         <CardDescription className="text-center">
                             Enter your credentials to access your account
                         </CardDescription>
@@ -144,7 +144,7 @@ export default function LoginPage() {
                                     </div>
                                 ) : (
                                     <>
-                                        Sign In
+                                        Login
                                         <ArrowRight className="ml-2 h-4 w-4" />
                                     </>
                                 )}

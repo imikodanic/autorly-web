@@ -146,7 +146,7 @@ export default function ConfirmEmailPage() {
                                         href="/login"
                                         className="text-blue-600 hover:text-blue-700 font-medium"
                                     >
-                                        Sign in to your account
+                                        Login to your account
                                     </Link>
                                 </p>
                             </div>
