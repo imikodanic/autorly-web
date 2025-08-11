@@ -1,14 +1,5 @@
 "use client";
-import {
-    Calendar,
-    Clock,
-    Heart,
-    MessageCircle,
-    Share2,
-    MoreHorizontal,
-    Edit,
-    Trash2,
-} from "lucide-react";
+import { Calendar, Clock, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,20 +18,17 @@ interface Post {
     status: "published" | "scheduled" | "draft";
     scheduledFor?: Date;
     publishedAt?: Date;
-    engagement: {
-        likes: number;
-        comments: number;
-        shares: number;
-    };
     imageUrl?: string;
 }
 
 interface PostCardProps {
     post: Post;
+    onEdit?: (postId: string) => void;
     onSchedule?: (postId: string) => void;
+    onDelete?: (postId: string) => void;
 }
 
-export function PostCard({ post, onSchedule }: PostCardProps) {
+export function PostCard({ post, onEdit, onSchedule, onDelete }: PostCardProps) {
     const getStatusBadge = () => {
         switch (post.status) {
             case "published":
@@ -66,6 +54,51 @@ export function PostCard({ post, onSchedule }: PostCardProps) {
             return `Scheduled for ${post.scheduledFor.toLocaleDateString()} at ${post.scheduledFor.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
         }
         return "Draft";
+    };
+
+    const getAvailableActions = () => {
+        const actions = [];
+
+        // Edit action - available for scheduled and draft posts
+        if (post.status === "scheduled" || post.status === "draft") {
+            actions.push(
+                <DropdownMenuItem key="edit" onClick={() => onEdit?.(post.id)}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                </DropdownMenuItem>
+            );
+        }
+
+        // Schedule/Reschedule action
+        if (post.status === "draft") {
+            actions.push(
+                <DropdownMenuItem key="schedule" onClick={() => onSchedule?.(post.id)}>
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Schedule
+                </DropdownMenuItem>
+            );
+        } else if (post.status === "scheduled") {
+            actions.push(
+                <DropdownMenuItem key="reschedule" onClick={() => onSchedule?.(post.id)}>
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Reschedule
+                </DropdownMenuItem>
+            );
+        }
+
+        // Delete action - available for all posts
+        actions.push(
+            <DropdownMenuItem
+                key="delete"
+                className="text-red-600"
+                onClick={() => onDelete?.(post.id)}
+            >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+            </DropdownMenuItem>
+        );
+
+        return actions;
     };
 
     return (
@@ -94,20 +127,7 @@ export function PostCard({ post, onSchedule }: PostCardProps) {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    Edit
-                                </DropdownMenuItem>
-                                {(post.status === "draft" || post.status === "scheduled") && (
-                                    <DropdownMenuItem onClick={() => onSchedule?.(post.id)}>
-                                        <Calendar className="mr-2 h-4 w-4" />
-                                        {post.status === "scheduled" ? "Reschedule" : "Schedule"}
-                                    </DropdownMenuItem>
-                                )}
-                                <DropdownMenuItem className="text-red-600">
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    Delete
-                                </DropdownMenuItem>
+                                {getAvailableActions()}
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -116,41 +136,6 @@ export function PostCard({ post, onSchedule }: PostCardProps) {
 
             <CardContent className="space-y-4">
                 <div className="whitespace-pre-wrap text-sm leading-relaxed">{post.content}</div>
-
-                {/*{post.imageUrl && (*/}
-                {/*  <div className="rounded-lg overflow-hidden">*/}
-                {/*    <img*/}
-                {/*      src={post.imageUrl || "/placeholder.svg"}*/}
-                {/*      alt="Post image"*/}
-                {/*      className="w-full h-auto max-h-96 object-cover"*/}
-                {/*    />*/}
-                {/*  </div>*/}
-                {/*)}*/}
-
-                {post.status === "published" && (
-                    <div className="flex items-center justify-between pt-3 border-t">
-                        <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-                            <div className="flex items-center space-x-1">
-                                <Heart className="h-4 w-4" />
-                                <span>{post.engagement.likes}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                                <MessageCircle className="h-4 w-4" />
-                                <span>{post.engagement.comments}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                                <Share2 className="h-4 w-4" />
-                                <span>{post.engagement.shares}</span>
-                            </div>
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                            {post.engagement.likes +
-                                post.engagement.comments +
-                                post.engagement.shares}{" "}
-                            total engagements
-                        </div>
-                    </div>
-                )}
             </CardContent>
         </Card>
     );
