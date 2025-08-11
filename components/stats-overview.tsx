@@ -7,11 +7,6 @@ interface Post {
     id: string;
     content: string;
     status: "published" | "scheduled" | "draft";
-    engagement: {
-        likes: number;
-        comments: number;
-        shares: number;
-    };
 }
 
 interface StatsOverviewProps {

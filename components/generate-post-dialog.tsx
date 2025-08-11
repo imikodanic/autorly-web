@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sparkles, Calendar, Clock, Save, Send, Edit3, Loader2, User, Bot } from "lucide-react";
+import { Sparkles, Calendar, Clock, Save, Send, Edit3, Loader2 } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -221,9 +221,6 @@ What's your experience with this? Drop your thoughts below! 👇
                                     }`}
                                 >
                                     <div className="flex items-start gap-3">
-                                        <User
-                                            className={`h-5 w-5 mt-0.5 ${contentMode === "user" ? "text-blue-600" : "text-gray-500"}`}
-                                        />
                                         <div>
                                             <div
                                                 className={`font-medium ${contentMode === "user" ? "text-blue-900" : "text-gray-900"}`}
@@ -253,9 +250,6 @@ What's your experience with this? Drop your thoughts below! 👇
                                     }`}
                                 >
                                     <div className="flex items-start gap-3">
-                                        <Bot
-                                            className={`h-5 w-5 mt-0.5 ${contentMode === "autorly" ? "text-blue-600" : "text-gray-500"}`}
-                                        />
                                         <div>
                                             <div
                                                 className={`font-medium ${contentMode === "autorly" ? "text-blue-900" : "text-gray-900"}`}
@@ -377,26 +371,6 @@ What's your experience with this? Drop your thoughts below! 👇
                                 </Button>
                             )}
                         </div>
-
-                        {!isEditMode && (
-                            <div className="flex gap-2">
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => setStep("input")}
-                                    className="flex-1"
-                                >
-                                    Back to Edit
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    onClick={handleGenerate}
-                                    className="flex-1 bg-transparent"
-                                >
-                                    <Sparkles className="mr-2 h-4 w-4" />
-                                    Regenerate
-                                </Button>
-                            </div>
-                        )}
                     </div>
                 )}
 

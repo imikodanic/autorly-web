@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, ChevronLeft, ChevronRight, Plus, Filter, Clock } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Filter, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarView } from "@/components/calendar-view";
 import { ScheduledPostCard } from "@/components/scheduled-post-card";
-import { GeneratePostDialog } from "@/components/generate-post-dialog";
 import { SchedulePostDialog } from "@/components/schedule-post-dialog";
 import { PostPreviewDialog } from "@/components/post-preview-dialog";
 import { format, addDays, startOfWeek, endOfWeek } from "date-fns";
@@ -61,7 +60,6 @@ export default function SchedulePage() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState<"month" | "week" | "list">("month");
     const [selectedPosts, setSelectedPosts] = useState(mockScheduledPosts);
-    const [showGenerateDialog, setShowGenerateDialog] = useState(false);
     const [showScheduleDialog, setShowScheduleDialog] = useState(false);
     const [showPreviewDialog, setShowPreviewDialog] = useState(false);
     const [selectedPost, setSelectedPost] = useState<string | null>(null);
@@ -80,13 +78,6 @@ export default function SchedulePage() {
         } else if (viewMode === "week") {
             setCurrentDate(addDays(currentDate, 7));
         }
-    };
-
-    const handleGeneratePost = (content: string) => {
-        // This would typically create a draft post
-        console.log("Generated post:", content);
-        setShowGenerateDialog(false);
-        setShowScheduleDialog(true);
     };
 
     const handleSchedulePost = (postId: string, scheduledFor: Date) => {
@@ -143,13 +134,13 @@ export default function SchedulePage() {
                         <Filter className="mr-2 h-4 w-4" />
                         Filter
                     </Button>
-                    <Button
+                    {/* <Button
                         onClick={() => setShowGenerateDialog(true)}
                         className="bg-blue-600 hover:bg-blue-700"
                     >
                         <Plus className="mr-2 h-4 w-4" />
                         Schedule Post
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
 
@@ -290,13 +281,6 @@ export default function SchedulePage() {
                     </TabsContent>
                 </div>
             </Tabs>
-
-            {/* Dialogs */}
-            <GeneratePostDialog
-                open={showGenerateDialog}
-                onOpenChange={setShowGenerateDialog}
-                onGenerate={handleGeneratePost}
-            />
 
             <SchedulePostDialog
                 open={showScheduleDialog}
