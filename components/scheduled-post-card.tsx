@@ -12,18 +12,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
-
-interface Post {
-    id: string;
-    content: string;
-    scheduledFor: Date;
-    status: "scheduled" | "published" | "draft";
-    platform: string;
-    imageUrl?: string;
-}
+import { LinkedInPost } from "@/lib/api/linkedin-posts/model";
 
 interface ScheduledPostCardProps {
-    post: Post;
+    post: LinkedInPost;
     onPreview: () => void;
     onEdit: () => void;
     onDelete: () => void;
@@ -64,15 +56,12 @@ export function ScheduledPostCard({ post, onPreview, onEdit, onDelete }: Schedul
                             <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
-                                    {format(post.scheduledFor, "MMM d, yyyy")}
+                                    {format(new Date(post.scheduled_at ?? ""), "MMM d, yyyy")}
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <Clock className="h-3 w-3" />
-                                    {format(post.scheduledFor, "h:mm a")}
+                                    {format(new Date(post.scheduled_at ?? ""), "h:mm a")}
                                 </div>
-                                <Badge variant="outline" className="text-xs">
-                                    {post.platform}
-                                </Badge>
                             </div>
                         </div>
                     </div>
@@ -117,7 +106,10 @@ export function ScheduledPostCard({ post, onPreview, onEdit, onDelete }: Schedul
                 {/*)}*/}
 
                 <div className="flex items-center justify-between pt-3 border-t text-sm text-muted-foreground">
-                    <div>Scheduled for {format(post.scheduledFor, "EEEE, MMMM d 'at' h:mm a")}</div>
+                    <div>
+                        Scheduled for{" "}
+                        {format(new Date(post.scheduled_at ?? ""), "EEEE, MMMM d 'at' h:mm a")}
+                    </div>
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"

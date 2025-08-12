@@ -8,60 +8,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarView } from "@/components/calendar-view";
 import { ScheduledPostCard } from "@/components/scheduled-post-card";
 import { SchedulePostDialog } from "@/components/schedule-post-dialog";
-import { PostPreviewDialog } from "@/components/post-preview-dialog";
 import { format, addDays, startOfWeek, endOfWeek } from "date-fns";
-
-// Mock scheduled posts data
-const mockScheduledPosts = [
-    {
-        id: "1",
-        content:
-            "🚀 Excited to share our latest product update! The new AI-powered analytics dashboard is now live. What features would you love to see next? #ProductUpdate #AI #Analytics",
-        scheduledFor: new Date("2024-01-20T09:00:00"),
-        status: "scheduled" as const,
-        platform: "LinkedIn",
-        imageUrl: "/placeholder.svg?height=200&width=400",
-    },
-    {
-        id: "2",
-        content:
-            "💡 5 key lessons I learned while building a SaaS from scratch:\n\n1. Customer feedback is gold\n2. MVP doesn't mean minimum effort\n3. Automation saves sanity\n4. Community beats competition\n5. Persistence pays off\n\nWhat would you add to this list?",
-        scheduledFor: new Date("2024-01-20T14:30:00"),
-        status: "scheduled" as const,
-        platform: "LinkedIn",
-    },
-    {
-        id: "3",
-        content:
-            "🎯 The secret to consistent LinkedIn growth? It's not about posting more—it's about posting smarter. Here's my framework for creating content that actually converts...",
-        scheduledFor: new Date("2024-01-21T10:15:00"),
-        status: "scheduled" as const,
-        platform: "LinkedIn",
-    },
-    {
-        id: "4",
-        content:
-            "🔥 Hot take: AI won't replace marketers, but marketers using AI will replace those who don't. The tools are evolving faster than ever. Are you keeping up? #MarketingAI #FutureOfWork",
-        scheduledFor: new Date("2024-01-22T11:00:00"),
-        status: "scheduled" as const,
-        platform: "LinkedIn",
-    },
-    {
-        id: "5",
-        content:
-            "📊 Weekly analytics review: Our content strategy is paying off! Engagement is up 45% this month. Here's what's working and what we're optimizing next...",
-        scheduledFor: new Date("2024-01-23T16:00:00"),
-        status: "scheduled" as const,
-        platform: "LinkedIn",
-    },
-];
+import { useLinkedInPosts } from "@/lib/api/linkedin-posts/hook";
+import { LinkedInPost } from "@/lib/api/linkedin-posts/model";
 
 export default function SchedulePage() {
+    const getPosts = useLinkedInPosts();
+    const posts: LinkedInPost[] = getPosts.data ?? [];
+
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState<"month" | "week" | "list">("month");
-    const [selectedPosts, setSelectedPosts] = useState(mockScheduledPosts);
+    const [selectedPosts, setSelectedPosts] = useState(posts);
     const [showScheduleDialog, setShowScheduleDialog] = useState(false);
-    const [showPreviewDialog, setShowPreviewDialog] = useState(false);
     const [selectedPost, setSelectedPost] = useState<string | null>(null);
 
     const handlePreviousPeriod = () => {
@@ -90,7 +48,6 @@ export default function SchedulePage() {
 
     const handlePreviewPost = (postId: string) => {
         setSelectedPost(postId);
-        setShowPreviewDialog(true);
     };
 
     const handleEditPost = (postId: string) => {
@@ -113,10 +70,6 @@ export default function SchedulePage() {
             return `${format(start, "MMM d")} - ${format(end, "MMM d, yyyy")}`;
         }
         return "";
-    };
-
-    const getSelectedPostData = () => {
-        return selectedPosts.find((post) => post.id === selectedPost) || null;
     };
 
     return (
@@ -267,7 +220,11 @@ export default function SchedulePage() {
                     <TabsContent value="list" className="mt-0">
                         <div className="space-y-4">
                             {selectedPosts
-                                .sort((a, b) => a.scheduledFor.getTime() - b.scheduledFor.getTime())
+                                .sort(
+                                    (a, b) =>
+                                        new Date(a.scheduled_at ?? "").getTime() -
+                                        new Date(b.scheduled_at ?? "").getTime()
+                                )
                                 .map((post) => (
                                     <ScheduledPostCard
                                         key={post.id}
@@ -287,22 +244,6 @@ export default function SchedulePage() {
                 onOpenChange={setShowScheduleDialog}
                 postId={selectedPost}
                 onSchedule={handleSchedulePost}
-            />
-
-            <PostPreviewDialog
-                open={showPreviewDialog}
-                onOpenChange={setShowPreviewDialog}
-                post={getSelectedPostData()}
-                onEdit={() => {
-                    setShowPreviewDialog(false);
-                    setShowScheduleDialog(true);
-                }}
-                onDelete={() => {
-                    if (selectedPost) {
-                        handleDeletePost(selectedPost);
-                        setShowPreviewDialog(false);
-                    }
-                }}
             />
         </div>
     );

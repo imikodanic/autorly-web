@@ -21,19 +21,11 @@ import {
     isSameDay,
     isToday,
 } from "date-fns";
-
-interface Post {
-    id: string;
-    content: string;
-    scheduledFor: Date;
-    status: "scheduled" | "published" | "draft";
-    platform: string;
-    imageUrl?: string;
-}
+import { LinkedInPost } from "@/lib/api/linkedin-posts/model";
 
 interface CalendarViewProps {
     currentDate: Date;
-    posts: Post[];
+    posts: LinkedInPost[];
     viewMode?: "month" | "week";
     onPreviewPost: (postId: string) => void;
     onEditPost: (postId: string) => void;
@@ -61,7 +53,7 @@ export function CalendarView({
     };
 
     const getPostsForDate = (date: Date) => {
-        return posts.filter((post) => isSameDay(post.scheduledFor, date));
+        return posts.filter((post) => isSameDay(new Date(post.scheduled_at ?? ""), date));
     };
 
     const calendarDays = getCalendarDays();
@@ -106,7 +98,10 @@ export function CalendarView({
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span className="font-medium text-blue-700">
-                                                    {format(post.scheduledFor, "HH:mm")}
+                                                    {format(
+                                                        new Date(post.scheduled_at ?? ""),
+                                                        "HH:mm"
+                                                    )}
                                                 </span>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger
@@ -214,7 +209,10 @@ export function CalendarView({
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span className="font-medium text-blue-700">
-                                                    {format(post.scheduledFor, "HH:mm")}
+                                                    {format(
+                                                        new Date(post.scheduled_at ?? ""),
+                                                        "HH:mm"
+                                                    )}
                                                 </span>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger
