@@ -68,9 +68,14 @@ export function useCreateLinkedInPost() {
 
     return useMutation({
         mutationFn: async (payload: InsertLinkedInPost) => {
+            const { data: userData, error: userError } = await supabase.auth.getUser();
+            if (userError) throw userError;
+
+            const insertPayload = { ...payload, user_id: userData.user.id };
+
             const { data, error } = await supabase
                 .from("linkedin_posts")
-                .insert(payload)
+                .insert(insertPayload)
                 .select()
                 .single()
                 .returns();

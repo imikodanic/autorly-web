@@ -1,5 +1,5 @@
 "use client";
-import { Calendar, Clock, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Clock, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,24 +11,22 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatDistanceToNow } from "date-fns";
-
-interface Post {
-    id: string;
-    content: string;
-    status: "published" | "scheduled" | "draft";
-    scheduledFor?: Date;
-    publishedAt?: Date;
-    imageUrl?: string;
-}
+import { LinkedInPost } from "@/lib/api/linkedin-posts/model";
+import { DeletePostDialog } from "./delete-post-dialog";
+import { useState } from "react";
 
 interface PostCardProps {
-    post: Post;
+    post: LinkedInPost;
     onEdit?: (postId: string) => void;
-    onSchedule?: (postId: string) => void;
     onDelete?: (postId: string) => void;
+    user: {
+        avatar_url: string;
+        display_name: string;
+    };
 }
 
-export function PostCard({ post, onEdit, onSchedule, onDelete }: PostCardProps) {
+export function PostCard({ post, onEdit, onDelete, user }: PostCardProps) {
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const getStatusBadge = () => {
         switch (post.status) {
             case "published":
@@ -47,11 +45,11 @@ export function PostCard({ post, onEdit, onSchedule, onDelete }: PostCardProps) 
     };
 
     const getTimeInfo = () => {
-        if (post.status === "published" && post.publishedAt) {
-            return `Published ${formatDistanceToNow(post.publishedAt, { addSuffix: true })}`;
+        if (post.status === "published" && post.published_at) {
+            return `Published ${formatDistanceToNow(post.published_at, { addSuffix: true })}`;
         }
-        if (post.status === "scheduled" && post.scheduledFor) {
-            return `Scheduled for ${post.scheduledFor.toLocaleDateString()} at ${post.scheduledFor.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+        if (post.status === "scheduled" && post.scheduled_at) {
+            return `Scheduled for ${new Date(post.scheduled_at).toLocaleDateString()} at ${new Date(post.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
         }
         return "Draft";
     };
@@ -69,29 +67,12 @@ export function PostCard({ post, onEdit, onSchedule, onDelete }: PostCardProps) 
             );
         }
 
-        // Schedule/Reschedule action
-        if (post.status === "draft") {
-            actions.push(
-                <DropdownMenuItem key="schedule" onClick={() => onSchedule?.(post.id)}>
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Schedule
-                </DropdownMenuItem>
-            );
-        } else if (post.status === "scheduled") {
-            actions.push(
-                <DropdownMenuItem key="reschedule" onClick={() => onSchedule?.(post.id)}>
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Reschedule
-                </DropdownMenuItem>
-            );
-        }
-
         // Delete action - available for all posts
         actions.push(
             <DropdownMenuItem
                 key="delete"
                 className="text-red-600"
-                onClick={() => onDelete?.(post.id)}
+                onClick={() => setShowDeleteDialog(true)}
             >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
@@ -102,41 +83,54 @@ export function PostCard({ post, onEdit, onSchedule, onDelete }: PostCardProps) 
     };
 
     return (
-        <Card className="w-full">
-            <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                        <Avatar className="h-10 w-10">
-                            <AvatarImage src="/placeholder.svg?height=40&width=40" />
-                            <AvatarFallback>YN</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-semibold">Your Name</p>
-                            <p className="text-sm text-muted-foreground flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                {getTimeInfo()}
-                            </p>
+        <>
+            <Card className="w-full gap-0">
+                <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-3">
+                            <Avatar className="h-10 w-10">
+                                <AvatarImage src={user.avatar_url} />
+                                <AvatarFallback>--</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-semibold">{user.display_name}</p>
+                                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    {getTimeInfo()}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {getStatusBadge()}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm">
+                                        <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    {getAvailableActions()}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        {getStatusBadge()}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {getAvailableActions()}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </div>
-            </CardHeader>
+                </CardHeader>
 
-            <CardContent className="space-y-4">
-                <div className="whitespace-pre-wrap text-sm leading-relaxed">{post.content}</div>
-            </CardContent>
-        </Card>
+                <CardContent className="space-y-4">
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                        {post.content}
+                    </div>
+                </CardContent>
+            </Card>
+            <DeletePostDialog
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+                post={post}
+                onConfirm={() => {
+                    onDelete?.(post.id);
+                    setShowDeleteDialog(false);
+                }}
+            />
+        </>
     );
 }
