@@ -51,9 +51,11 @@ export async function POST(req: NextRequest) {
         }),
     });
 
+    const publishedPost = await linkedinPost.json();
+
     return Response.json({
         status: 200,
         message: "Post created successfully",
-        post: linkedinPost,
+        post: publishedPost,
     });
 }

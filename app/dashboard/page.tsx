@@ -51,7 +51,7 @@ export default function DashboardPage() {
     const handlePublishPost = async (content: string) => {
         const publishedPost = await postToLinkedin(content);
 
-        console.log(publishedPost);
+        console.log(await publishedPost.json());
 
         if (editingPost) {
             updatePostMutation.mutate({
