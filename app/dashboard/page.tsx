@@ -16,9 +16,12 @@ import {
     useUpdateLinkedInPost,
 } from "@/lib/api/linkedin-posts/hook";
 import { LinkedInPost } from "@/lib/api/linkedin-posts/model";
+import { PageLoadingState } from "@/components/page-loading-state";
 
 export default function DashboardPage() {
-    const { data: me } = useMe();
+    const { data: me, isLoading } = useMe();
+
+    console.log(me, isLoading);
 
     const getPosts = useLinkedInPosts();
     const createPostMutation = useCreateLinkedInPost();
@@ -131,6 +134,10 @@ export default function DashboardPage() {
     const publishedPosts = posts.filter((post) => post.status === "published");
     const scheduledPosts = posts.filter((post) => post.status === "scheduled");
     const draftPosts = posts.filter((post) => post.status === "draft");
+
+    if (isLoading) {
+        return <PageLoadingState />;
+    }
 
     if (!me?.linkedinAccount) {
         return <LinkedInNotConnectedState />;
