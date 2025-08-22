@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, ChevronLeft, ChevronRight, Filter, Clock } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -83,10 +83,10 @@ export default function SchedulePage() {
                     </p>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <Button variant="outline" className="bg-transparent">
+                    {/* <Button variant="outline" className="bg-transparent">
                         <Filter className="mr-2 h-4 w-4" />
                         Filter
-                    </Button>
+                    </Button> */}
                     {/* <Button
                         onClick={() => setShowGenerateDialog(true)}
                         className="bg-blue-600 hover:bg-blue-700"

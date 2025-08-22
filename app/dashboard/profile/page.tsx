@@ -1,18 +1,10 @@
 "use client";
 
-import { Linkedin, Palette } from "lucide-react";
+import { Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+
 import { ProfileStats } from "@/components/profile-stats";
 import Link from "next/link";
 import { getLinkedinAuthURL } from "@/utils/linkedin/get-auth-url";
@@ -126,20 +118,16 @@ export default function ProfilePage() {
 
                 {/* Right Column - Stats & Settings */}
                 <div className="space-y-6">
-                    <Card>
+                    {/* <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Palette className="h-5 w-5" />
                                 Brand Voice
                             </CardTitle>
-                            <CardDescription>Customize how AI writes in your voice</CardDescription>
+                            <CardDescription>Customize your tone of voice</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <Label className="text-sm">Professional Tone</Label>
-                                    <Switch defaultChecked />
-                                </div>
                                 <div className="flex items-center justify-between">
                                     <Label className="text-sm">Use Emojis</Label>
                                     <Switch defaultChecked />
@@ -171,7 +159,7 @@ export default function ProfilePage() {
                                 </Select>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                     <ProfileStats />
                 </div>
             </div>

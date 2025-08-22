@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Calendar, BarChart3, Settings, User, LogOut } from "lucide-react";
+import { Home, Calendar, BarChart3, User, LogOut } from "lucide-react";
 import {
     Sidebar,
     SidebarContent,
@@ -124,14 +124,14 @@ export function AppSidebar() {
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
-                    <SidebarMenuItem>
+                    {/* <SidebarMenuItem>
                         <SidebarMenuButton>
                             <Settings />
                             <Link href="/dashboard/settings" className="w-full">
                                 Settings
                             </Link>
                         </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    </SidebarMenuItem> */}
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             onClick={() => {

@@ -7,10 +7,8 @@ import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
-import { Badge } from "../ui/badge";
 import { ContentThemes } from "../content-themes";
 import { PostingPatterns } from "../posting-patterns";
-import { AddFocusAreaDialog } from "./add-focus-area-dialog";
 import { Profile } from "@/lib/api/profile/model";
 
 type ContentPreferencesProperties = {
@@ -99,7 +97,7 @@ export function ContentPreferences({ profileData }: ContentPreferencesProperties
                                 placeholder="e.g., Product Managers, Entrepreneurs, Tech Leaders"
                             />
                         </div>
-
+                        {/* 
                         <div className="space-y-3">
                             <Label>Content Focus Areas</Label>
                             <div className="flex flex-wrap gap-2">
@@ -114,7 +112,7 @@ export function ContentPreferences({ profileData }: ContentPreferencesProperties
                                     onAddFocusArea={() => {}}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </CardContent>
                 </Card>
             </TabsContent>
