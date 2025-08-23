@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { Eye, EyeOff, ArrowRight, Mail } from "lucide-react";
+import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,7 +75,12 @@ export default function LoginPage() {
                                 size="lg"
                                 onClick={handleGoogle}
                             >
-                                <Mail className="mr-2 h-5 w-5" />
+                                <Image
+                                    src="/icons/google-logo.jpg"
+                                    alt="Google"
+                                    width={20}
+                                    height={20}
+                                />
                                 Continue with Google
                             </Button>
                         </div>
