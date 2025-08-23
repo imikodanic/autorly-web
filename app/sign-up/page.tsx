@@ -17,8 +17,6 @@ import { signup } from "@/app/sign-up/actions";
 export default function SignUpPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
         email: "",
         password: "",
         agreeToTerms: false,
@@ -91,37 +89,6 @@ export default function SignUpPage() {
 
                         {/* Signup Form */}
                         <form className="space-y-4">
-                            {/*<div className="grid grid-cols-2 gap-4">*/}
-                            {/*    <div className="space-y-2">*/}
-                            {/*        <Label htmlFor="firstName">First name</Label>*/}
-                            {/*        <Input*/}
-                            {/*            id="firstName"*/}
-                            {/*            type="text"*/}
-                            {/*            placeholder="John"*/}
-                            {/*            value={formData.firstName}*/}
-                            {/*            onChange={(e) =>*/}
-                            {/*                handleInputChange("firstName", e.target.value)*/}
-                            {/*            }*/}
-                            {/*            required*/}
-                            {/*            className="h-12"*/}
-                            {/*        />*/}
-                            {/*    </div>*/}
-                            {/*    <div className="space-y-2">*/}
-                            {/*        <Label htmlFor="lastName">Last name</Label>*/}
-                            {/*        <Input*/}
-                            {/*            id="lastName"*/}
-                            {/*            type="text"*/}
-                            {/*            placeholder="Doe"*/}
-                            {/*            value={formData.lastName}*/}
-                            {/*            onChange={(e) =>*/}
-                            {/*                handleInputChange("lastName", e.target.value)*/}
-                            {/*            }*/}
-                            {/*            required*/}
-                            {/*            className="h-12"*/}
-                            {/*        />*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
-
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email address</Label>
                                 <Input
