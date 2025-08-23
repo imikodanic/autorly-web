@@ -12,6 +12,7 @@ import { ContentPreferences } from "@/components/profile/content-preferences";
 import { DisconnectLinkedInDialog } from "@/components/profile/disconnect-linkedin-dialog";
 import { Profile } from "@/lib/api/profile/model";
 import { useMe } from "@/lib/api/me/hook";
+import { RegionalSettingsSection } from "@/components/regional-settings-section";
 
 export default function ProfilePage() {
     const { data: me } = useMe();
@@ -22,16 +23,12 @@ export default function ProfilePage() {
 
     const profileData: Profile = {
         id: "asd",
-        picture: me.linkedinAccount?.avatar_url,
-        name: me.linkedinAccount?.display_name,
-        headline: "Headline",
         bio: "Some detailed bio about the user, highlighting their expertise and professional background.",
         industry: "Industry",
         location: "San Francisco, CA",
         company: "TechCorp",
         experience: "5+ years",
         targetAudience: "Product Managers, Entrepreneurs, Tech Leaders",
-        contentFocus: ["Product Management", "AI & Technology", "Startup Insights", "Leadership"],
     };
 
     return (
@@ -114,6 +111,7 @@ export default function ProfilePage() {
                     </Card>
                     {/* Content Preferences */}
                     <ContentPreferences profileData={profileData} />
+                    <RegionalSettingsSection />
                 </div>
 
                 {/* Right Column - Stats & Settings */}
