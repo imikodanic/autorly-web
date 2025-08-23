@@ -7,6 +7,16 @@ import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { LinkedInPost } from "@/lib/api/linkedin-posts/model";
 
+type ChosenTopic = {
+    title: string;
+    angle: string;
+    personalFrame: string;
+    whyNow: string;
+    stanceSeeds: string[];
+    talkingPoints: string[];
+    citations: { source: string; url: string }[];
+};
+
 /* ===== Request payload ===== */
 type GenerateLinkedInPostRequest = {
     topic?: string; // if missing → Topic Agent (web search)
@@ -31,6 +41,7 @@ async function pickTopicWithSearch(
         previousPosts: string[];
     }
 ) {
+    console.log(input);
     const resp = await client.responses.create({
         model: "gpt-4o",
         tools: [{ type: "web_search_preview" }],
@@ -40,23 +51,18 @@ async function pickTopicWithSearch(
     });
 
     const text = resp.output_text as string;
-    try {
-        const json = JSON.parse(text);
-        return json?.chosen?.title as string | undefined;
-    } catch {
-        // Fallback: try to pull a line like: title: "..."
-        const m = /"title"\s*:\s*"([^"]{10,120})"/i.exec(text);
-        return m?.[1];
-    }
+
+    const json = JSON.parse(text);
+    console.log(json);
+    return json?.chosen as ChosenTopic | undefined;
 }
 
 /* ===== Writer Agent (post generation) ===== */
 async function writeLinkedInPost(
     client: OpenAI,
     payload: {
-        topic: string;
+        topic: ChosenTopic;
         author: { name: string; bio: string; industry: string; country: string };
-        tone: string;
         audience: string;
         language: string;
         previousPosts: string[];
@@ -66,9 +72,7 @@ async function writeLinkedInPost(
         topic: payload.topic,
         author: payload.author,
         audience: payload.audience,
-        tone: payload.tone || "conversational, clear, no buzzwords",
         language: payload.language,
-        cta: "none",
         previousPosts: payload.previousPosts.slice(0, 8),
     };
 
@@ -110,8 +114,9 @@ export async function POST(request: Request) {
         };
 
         // 1) If no topic → Topic Agent (web search) to pick one
-        let topic = body.topic?.trim();
-        if (!topic) {
+        let topic;
+
+        if (!body.topic) {
             topic = await pickTopicWithSearch(client, {
                 author,
                 audience: profile.targetAudience,
@@ -129,13 +134,14 @@ export async function POST(request: Request) {
                     { status: 502 }
                 );
             }
+        } else {
+            topic = normalizeTopic(body.topic.trim());
         }
 
         // 2) Writer Agent → generate post
         const post = await writeLinkedInPost(client, {
             topic,
             author,
-            tone: "conversational, clear",
             audience: profile.targetAudience,
             language: profile.language ?? "English (US)",
             previousPosts,
@@ -208,3 +214,29 @@ const getPreviousPosts = async (supabase: SupabaseClient) => {
 
     return data as Array<LinkedInPost>;
 };
+
+type TopicInput = string | ChosenTopic;
+
+function normalizeTopic(input: TopicInput): ChosenTopic {
+    if (typeof input !== "string") return input;
+
+    // Minimal wrapper for user-typed topics
+    const title = input.trim();
+    return {
+        title,
+        angle: "Personal perspective",
+        personalFrame: "opinion",
+        whyNow: "relevant to current audience",
+        stanceSeeds: [
+            "Here's how I currently approach it.",
+            "What changed my mind recently.",
+            "One trade-off I keep running into.",
+        ],
+        talkingPoints: [
+            "When advice backfires",
+            "Rule of thumb that helps",
+            "Common pitfall to avoid",
+        ],
+        citations: [],
+    };
+}
