@@ -15,6 +15,7 @@ import { useUpdateProfile } from "@/lib/api/profile/hook";
 import { useMe } from "@/lib/api/me/hook";
 import { PageLoadingState } from "../page-loading-state";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 export function ContentPreferences() {
     const { data: me, isLoading: userLoading } = useMe();
@@ -50,10 +51,17 @@ export function ContentPreferences() {
     if (!profile || !me) return null;
 
     const onSave = () =>
-        update.mutate({
-            id: me.id,
-            ...form,
-        });
+        update.mutate(
+            {
+                id: me.id,
+                ...form,
+            },
+            {
+                onSuccess: () => {
+                    toast.success("Content preferences updated successfully.");
+                },
+            }
+        );
 
     return (
         <Tabs defaultValue="preferences" className="space-y-4">
