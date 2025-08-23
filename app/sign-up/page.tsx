@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { Eye, EyeOff, ArrowRight, Linkedin, Mail, Check } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Mail, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -79,14 +79,6 @@ export default function SignUpPage() {
                     <CardContent className="space-y-6">
                         {/* Social Signup */}
                         <div className="space-y-3">
-                            <Button
-                                variant="outline"
-                                className="w-full h-12 bg-transparent"
-                                size="lg"
-                            >
-                                <Linkedin className="mr-2 h-5 w-5 text-blue-600" />
-                                Continue with LinkedIn
-                            </Button>
                             <Button
                                 variant="outline"
                                 className="w-full h-12 bg-transparent"

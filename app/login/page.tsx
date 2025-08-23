@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { Eye, EyeOff, ArrowRight, Linkedin, Mail } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,12 +12,33 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
 import { login } from "@/app/login/actions";
+import { createClient } from "@/utils/supabase/client";
 
 export default function LoginPage() {
+    const supabase = createClient();
+
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading] = useState(false);
+
+    const handleGoogle = async () => {
+        const redirectTo = `${window.location.origin}/auth/callback?next=/dashboard`;
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo,
+                queryParams: {
+                    access_type: "offline", // try to obtain a refresh_token
+                    prompt: "consent", // forces consent screen for refresh_token on subsequent logins
+                },
+            },
+        });
+        if (error) {
+            // show a toast or inline error
+            console.error(error.message);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
@@ -52,14 +73,7 @@ export default function LoginPage() {
                                 variant="outline"
                                 className="w-full h-12 bg-transparent"
                                 size="lg"
-                            >
-                                <Linkedin className="mr-2 h-5 w-5 text-blue-600" />
-                                Continue with LinkedIn
-                            </Button>
-                            <Button
-                                variant="outline"
-                                className="w-full h-12 bg-transparent"
-                                size="lg"
+                                onClick={handleGoogle}
                             >
                                 <Mail className="mr-2 h-5 w-5" />
                                 Continue with Google
