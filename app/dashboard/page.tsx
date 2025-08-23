@@ -32,7 +32,7 @@ export default function DashboardPage() {
     const [editingPost, setEditingPost] = useState<string | null>(null);
 
     async function postToLinkedin(content: string) {
-        const response = await fetch("/api/linkedin/posts", {
+        const response = await fetch("/api/linkedin/posts/publish", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -156,8 +156,8 @@ export default function DashboardPage() {
                         onClick={() => setShowGenerateDialog(true)}
                         className="bg-blue-600 hover:bg-blue-700"
                     >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Generate Post
+                        <Plus className="h-4 w-4" />
+                        New Post
                     </Button>
                 </div>
             </div>
