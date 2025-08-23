@@ -74,42 +74,19 @@ export function GeneratePostDialog({
     const handleGenerate = async () => {
         setIsGenerating(true);
 
-        // Simulate AI generation
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const response = await fetch("/api/linkedin/posts/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                topic: prompt,
+            }),
+        });
 
-        let mockContent = "";
+        const { data } = await response.json();
 
-        if (contentMode === "autorly") {
-            mockContent = `🚀 The future of LinkedIn automation is here!
-
-As professionals, we're constantly juggling content creation with our core responsibilities. Here's what I've discovered about maintaining consistent LinkedIn presence:
-
-✅ Authenticity beats perfection every time
-✅ Consistent posting drives 3x more engagement
-✅ AI can amplify your voice, not replace it
-
-The key is finding tools that understand your professional voice and help you scale your thought leadership.
-
-What's your biggest challenge with LinkedIn content? Let's discuss! 👇
-
-#LinkedIn #AI #Automation #ThoughtLeadership`;
-        } else {
-            mockContent = `🚀 ${prompt}
-
-Here's what I've learned from this experience:
-
-✅ Key insight #1: Always focus on value first
-✅ Key insight #2: Consistency beats perfection  
-✅ Key insight #3: Community is everything
-
-The biggest takeaway? Success comes from authentic engagement and providing real value to your network.
-
-What's your experience with this? Drop your thoughts below! 👇
-
-#LinkedIn #Professional #Growth #Insights`;
-        }
-
-        setGeneratedContent(mockContent);
+        setGeneratedContent(data.content);
         setIsGenerating(false);
         setStep("preview");
     };
