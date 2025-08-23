@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Globe, Target } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
@@ -10,17 +11,49 @@ import { Input } from "../ui/input";
 import { ContentThemes } from "../content-themes";
 import { PostingPatterns } from "../posting-patterns";
 import { useProfile } from "@/lib/api/profile/hook";
+import { useUpdateProfile } from "@/lib/api/profile/hook";
 import { useMe } from "@/lib/api/me/hook";
 import { PageLoadingState } from "../page-loading-state";
+import { Button } from "../ui/button";
 
 export function ContentPreferences() {
     const { data: me, isLoading: userLoading } = useMe();
-
     const { data: profile, isLoading: profileLoading } = useProfile(me?.id);
+    const update = useUpdateProfile();
+
+    const [form, setForm] = useState({
+        industry: "",
+        experience: "",
+        bio: "",
+        targetAudience: "",
+        country: "",
+        timezone: "",
+        language: "",
+    });
+
+    // Sync local form when profile loads/changes
+    useEffect(() => {
+        if (profile) {
+            setForm({
+                industry: profile.industry ?? "",
+                experience: profile.experience ?? "",
+                bio: profile.bio ?? "",
+                targetAudience: profile.targetAudience ?? "",
+                country: profile.country ?? "",
+                timezone: profile.timezone ?? "",
+                language: profile.language ?? "",
+            });
+        }
+    }, [profile]);
 
     if (userLoading || profileLoading) return <PageLoadingState />;
+    if (!profile || !me) return null;
 
-    if (!profile) return;
+    const onSave = () =>
+        update.mutate({
+            id: me.id,
+            ...form,
+        });
 
     return (
         <Tabs defaultValue="preferences" className="space-y-4">
@@ -45,25 +78,31 @@ export function ContentPreferences() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Industry</Label>
-                                <Select value={profile.industry}>
+                                <Select
+                                    value={form.industry}
+                                    onValueChange={(v) => setForm((s) => ({ ...s, industry: v }))}
+                                >
                                     <SelectTrigger>
-                                        <SelectValue />
+                                        <SelectValue placeholder="Select industry" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="Technology">Technology</SelectItem>
-                                        <SelectItem value="Finance">Finance</SelectItem>
-                                        <SelectItem value="Healthcare">Healthcare</SelectItem>
-                                        <SelectItem value="Marketing">Marketing</SelectItem>
-                                        <SelectItem value="Consulting">Consulting</SelectItem>
+                                        {INDUSTRY_OPTIONS.map((industry) => (
+                                            <SelectItem key={industry} value={industry}>
+                                                {industry}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="space-y-2">
                                 <Label>Experience Level</Label>
-                                <Select value={profile.experience}>
+                                <Select
+                                    value={form.experience}
+                                    onValueChange={(v) => setForm((s) => ({ ...s, experience: v }))}
+                                >
                                     <SelectTrigger>
-                                        <SelectValue />
+                                        <SelectValue placeholder="Select experience" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="0-2 years">0-2 years</SelectItem>
@@ -78,13 +117,8 @@ export function ContentPreferences() {
                         <div className="space-y-2">
                             <Label>Professional Bio</Label>
                             <Textarea
-                                value={profile.bio}
-                                onChange={(e) =>
-                                    console.log({
-                                        ...profile,
-                                        bio: e.target.value,
-                                    })
-                                }
+                                value={form.bio}
+                                onChange={(e) => setForm((s) => ({ ...s, bio: e.target.value }))}
                                 rows={4}
                                 placeholder="Tell us about your professional background and expertise..."
                             />
@@ -93,34 +127,21 @@ export function ContentPreferences() {
                         <div className="space-y-2">
                             <Label>Target Audience</Label>
                             <Input
-                                value={profile.targetAudience}
+                                value={form.targetAudience}
                                 onChange={(e) =>
-                                    console.log({
-                                        ...profile,
-                                        targetAudience: e.target.value,
-                                    })
+                                    setForm((s) => ({ ...s, targetAudience: e.target.value }))
                                 }
                                 placeholder="e.g., Product Managers, Entrepreneurs, Tech Leaders"
                             />
                         </div>
-                        {/* 
-                        <div className="space-y-3">
-                            <Label>Content Focus Areas</Label>
-                            <div className="flex flex-wrap gap-2">
-                                {profile.contentFocus.map((focus, index) => (
-                                    <Badge key={index} variant="secondary" className="text-xs">
-                                        {focus}
-                                        <span className="ml-1 cursor-pointer">×</span>
-                                    </Badge>
-                                ))}
-                                <AddFocusAreaDialog
-                                    currentFocusAreas={profile.contentFocus}
-                                    onAddFocusArea={() => {}}
-                                />
-                            </div>
-                        </div> */}
+                        <div className="flex justify-end">
+                            <Button onClick={onSave} disabled={update.isPending}>
+                                {update.isPending ? "Saving…" : "Save changes"}
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
+
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -132,74 +153,64 @@ export function ContentPreferences() {
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
                             <Label className="text-sm">Country/Region</Label>
-                            <Select value={"United States"}>
+                            <Select
+                                value={form.country}
+                                onValueChange={(v) => setForm((s) => ({ ...s, country: v }))}
+                            >
                                 <SelectTrigger>
-                                    <SelectValue />
+                                    <SelectValue placeholder="Select country" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="United States">United States</SelectItem>
-                                    <SelectItem value="Canada">Canada</SelectItem>
-                                    <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                                    <SelectItem value="Germany">Germany</SelectItem>
-                                    <SelectItem value="France">France</SelectItem>
-                                    <SelectItem value="Australia">Australia</SelectItem>
-                                    <SelectItem value="Japan">Japan</SelectItem>
-                                    <SelectItem value="India">India</SelectItem>
+                                    {COUNTRY_OPTIONS.map((country) => (
+                                        <SelectItem key={country} value={country}>
+                                            {country}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-2">
                             <Label className="text-sm">Timezone</Label>
-                            <Select value={"America/Los_Angeles"}>
+                            <Select
+                                value={form.timezone}
+                                onValueChange={(v) => setForm((s) => ({ ...s, timezone: v }))}
+                            >
                                 <SelectTrigger>
-                                    <SelectValue />
+                                    <SelectValue placeholder="Select timezone" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="America/Los_Angeles">
-                                        Pacific Time (PT)
-                                    </SelectItem>
-                                    <SelectItem value="America/Denver">
-                                        Mountain Time (MT)
-                                    </SelectItem>
-                                    <SelectItem value="America/Chicago">
-                                        Central Time (CT)
-                                    </SelectItem>
-                                    <SelectItem value="America/New_York">
-                                        Eastern Time (ET)
-                                    </SelectItem>
-                                    <SelectItem value="Europe/London">
-                                        Greenwich Mean Time (GMT)
-                                    </SelectItem>
-                                    <SelectItem value="Europe/Paris">
-                                        Central European Time (CET)
-                                    </SelectItem>
-                                    <SelectItem value="Asia/Tokyo">
-                                        Japan Standard Time (JST)
-                                    </SelectItem>
-                                    <SelectItem value="Australia/Sydney">
-                                        Australian Eastern Time (AET)
-                                    </SelectItem>
+                                    {TIMEZONE_OPTIONS.map((timezone) => (
+                                        <SelectItem key={timezone} value={timezone}>
+                                            {timezone}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div className="space-y-2">
                             <Label className="text-sm">Language</Label>
-                            <Select value={"English (US)"}>
+                            <Select
+                                value={form.language}
+                                onValueChange={(v) => setForm((s) => ({ ...s, language: v }))}
+                            >
                                 <SelectTrigger>
-                                    <SelectValue />
+                                    <SelectValue placeholder="Select language" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="English (US)">English (US)</SelectItem>
-                                    <SelectItem value="English (UK)">English (UK)</SelectItem>
-                                    <SelectItem value="Spanish">Spanish</SelectItem>
-                                    <SelectItem value="French">French</SelectItem>
-                                    <SelectItem value="German">German</SelectItem>
-                                    <SelectItem value="Japanese">Japanese</SelectItem>
-                                    <SelectItem value="Portuguese">Portuguese</SelectItem>
+                                    {LANGUAGE_OPTIONS.map((language) => (
+                                        <SelectItem key={language} value={language}>
+                                            {language}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
+                        </div>
+                        <div className="flex justify-end">
+                            <Button onClick={onSave} disabled={update.isPending}>
+                                {update.isPending ? "Saving…" : "Save changes"}
+                            </Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -215,3 +226,193 @@ export function ContentPreferences() {
         </Tabs>
     );
 }
+
+const INDUSTRY_OPTIONS = [
+    "Technology",
+    "SaaS",
+    "Artificial Intelligence / ML",
+    "Cybersecurity",
+    "Fintech / Finance",
+    "Healthcare",
+    "Biotechnology / Pharma",
+    "E-commerce",
+    "Retail",
+    "Marketing / Advertising",
+    "Media / Entertainment",
+    "Gaming",
+    "Education",
+    "Consulting",
+    "Real Estate",
+    "Legal",
+    "HR / Recruiting",
+    "Travel / Hospitality",
+    "Transportation / Logistics",
+    "Manufacturing",
+    "Energy / Utilities",
+    "Telecommunications",
+    "Automotive",
+    "Nonprofit",
+    "Government / Public Sector",
+] as const;
+
+export const COUNTRY_OPTIONS = [
+    "Argentina",
+    "Australia",
+    "Austria",
+    "Bangladesh",
+    "Belgium",
+    "Bosnia and Herzegovina",
+    "Brazil",
+    "Bulgaria",
+    "Canada",
+    "Chile",
+    "China",
+    "Colombia",
+    "Croatia",
+    "Czech Republic",
+    "Denmark",
+    "Egypt",
+    "Finland",
+    "France",
+    "Germany",
+    "Greece",
+    "Hong Kong",
+    "Hungary",
+    "India",
+    "Indonesia",
+    "Ireland",
+    "Israel",
+    "Italy",
+    "Japan",
+    "Kenya",
+    "Malaysia",
+    "Mexico",
+    "Netherlands",
+    "New Zealand",
+    "Nigeria",
+    "Norway",
+    "Pakistan",
+    "Peru",
+    "Philippines",
+    "Poland",
+    "Portugal",
+    "Romania",
+    "Russia",
+    "Saudi Arabia",
+    "Serbia",
+    "Singapore",
+    "Slovenia",
+    "South Africa",
+    "South Korea",
+    "Spain",
+    "Sweden",
+    "Switzerland",
+    "Thailand",
+    "Turkey",
+    "Ukraine",
+    "United Arab Emirates",
+    "United Kingdom",
+    "United States",
+    "Vietnam",
+];
+
+export const TIMEZONE_OPTIONS = [
+    "Pacific/Midway",
+    "Pacific/Honolulu",
+    "America/Anchorage",
+    "America/Los_Angeles", // Pacific Time (PT)
+    "America/Denver", // Mountain Time (MT)
+    "America/Chicago", // Central Time (CT)
+    "America/New_York", // Eastern Time (ET)
+    "America/Toronto",
+    "America/Mexico_City",
+    "America/Sao_Paulo",
+    "America/Argentina/Buenos_Aires",
+
+    "Europe/London", // GMT / BST
+    "Europe/Dublin",
+    "Europe/Lisbon",
+    "Europe/Paris", // CET / CEST
+    "Europe/Berlin",
+    "Europe/Rome",
+    "Europe/Amsterdam",
+    "Europe/Stockholm",
+    "Europe/Oslo",
+    "Europe/Helsinki",
+    "Europe/Athens",
+    "Europe/Istanbul",
+    "Europe/Moscow",
+    "Europe/Kiev",
+    "Europe/Warsaw",
+    "Europe/Prague",
+    "Europe/Bucharest",
+    "Europe/Sofia",
+    "Europe/Belgrade",
+    "Europe/Zagreb",
+
+    "Africa/Cairo",
+    "Africa/Nairobi",
+    "Africa/Johannesburg",
+    "Africa/Lagos",
+
+    "Asia/Dubai",
+    "Asia/Jerusalem",
+    "Asia/Tehran",
+    "Asia/Karachi",
+    "Asia/Kolkata", // India Standard Time
+    "Asia/Dhaka",
+    "Asia/Bangkok",
+    "Asia/Singapore",
+    "Asia/Hong_Kong",
+    "Asia/Shanghai",
+    "Asia/Tokyo", // JST
+    "Asia/Seoul", // KST
+    "Asia/Kuala_Lumpur",
+    "Asia/Jakarta",
+    "Asia/Manila",
+
+    "Australia/Perth",
+    "Australia/Adelaide",
+    "Australia/Sydney",
+    "Pacific/Auckland",
+];
+
+export const LANGUAGE_OPTIONS = [
+    "English (US)",
+    "English (UK)",
+    "Spanish",
+    "French",
+    "German",
+    "Italian",
+    "Portuguese (Brazil)",
+    "Portuguese (Portugal)",
+    "Dutch",
+    "Swedish",
+    "Norwegian",
+    "Danish",
+    "Finnish",
+    "Polish",
+    "Czech",
+    "Slovak",
+    "Hungarian",
+    "Romanian",
+    "Croatian",
+    "Bulgarian",
+    "Greek",
+    "Turkish",
+    "Russian",
+    "Ukrainian",
+    "Arabic",
+    "Hebrew",
+    "Hindi",
+    "Bengali",
+    "Urdu",
+    "Chinese (Simplified)",
+    "Chinese (Traditional)",
+    "Japanese",
+    "Korean",
+    "Vietnamese",
+    "Thai",
+    "Indonesian",
+    "Malay",
+];
