@@ -1,6 +1,7 @@
 import { useSupabase } from "@/app/providers";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "./queryKeys";
+import { User } from "./model";
 
 export function useMe() {
     const supabase = useSupabase();
@@ -18,7 +19,7 @@ export function useMe() {
 
             if (!data.user) return null;
 
-            return { ...data.user, linkedinAccount };
+            return { ...data.user, linkedinAccount } as User;
         },
     });
 }

@@ -10,9 +10,7 @@ import Link from "next/link";
 import { getLinkedinAuthURL } from "@/utils/linkedin/get-auth-url";
 import { ContentPreferences } from "@/components/profile/content-preferences";
 import { DisconnectLinkedInDialog } from "@/components/profile/disconnect-linkedin-dialog";
-import { Profile } from "@/lib/api/profile/model";
 import { useMe } from "@/lib/api/me/hook";
-import { RegionalSettingsSection } from "@/components/regional-settings-section";
 
 export default function ProfilePage() {
     const { data: me } = useMe();
@@ -20,16 +18,6 @@ export default function ProfilePage() {
     if (!me) return null;
 
     const isConnected = !!me.linkedinAccount;
-
-    const profileData: Profile = {
-        id: "asd",
-        bio: "Some detailed bio about the user, highlighting their expertise and professional background.",
-        industry: "Industry",
-        location: "San Francisco, CA",
-        company: "TechCorp",
-        experience: "5+ years",
-        targetAudience: "Product Managers, Entrepreneurs, Tech Leaders",
-    };
 
     return (
         <div className="flex-1 space-y-6 p-6">
@@ -60,18 +48,20 @@ export default function ProfilePage() {
                                     <div className="flex items-start gap-3">
                                         <div className="relative">
                                             <Avatar className="h-12 w-12">
-                                                <AvatarImage src={profileData.picture} />
+                                                <AvatarImage src={me.linkedinAccount.avatar_url} />
                                                 <AvatarFallback>AJ</AvatarFallback>
                                             </Avatar>
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-semibold">{profileData.name}</h3>
+                                            <h3 className="font-semibold">
+                                                {me.linkedinAccount.display_name}
+                                            </h3>
                                             <p className="text-sm text-muted-foreground">
-                                                {profileData.headline}
+                                                {me.email}
                                             </p>
-                                            <p className="text-xs text-muted-foreground">
+                                            {/* <p className="text-xs text-muted-foreground">
                                                 {profileData.company} • {profileData.location}
-                                            </p>
+                                            </p> */}
                                         </div>
                                     </div>
                                 </div>
@@ -110,8 +100,7 @@ export default function ProfilePage() {
                         </CardContent>
                     </Card>
                     {/* Content Preferences */}
-                    <ContentPreferences profileData={profileData} />
-                    <RegionalSettingsSection />
+                    <ContentPreferences />
                 </div>
 
                 {/* Right Column - Stats & Settings */}

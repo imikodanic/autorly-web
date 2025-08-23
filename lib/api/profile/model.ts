@@ -3,7 +3,8 @@ export type Profile = {
     industry: string;
     experience: string;
     bio: string;
-    location: string;
-    company: string;
     targetAudience: string;
+    country: string;
+    timezone: string;
+    language: string;
 };

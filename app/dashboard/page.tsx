@@ -21,8 +21,6 @@ import { PageLoadingState } from "@/components/page-loading-state";
 export default function DashboardPage() {
     const { data: me, isLoading } = useMe();
 
-    console.log(me, isLoading);
-
     const getPosts = useLinkedInPosts();
     const createPostMutation = useCreateLinkedInPost();
     const updatePostMutation = useUpdateLinkedInPost();

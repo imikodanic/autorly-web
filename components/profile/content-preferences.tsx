@@ -9,13 +9,20 @@ import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
 import { ContentThemes } from "../content-themes";
 import { PostingPatterns } from "../posting-patterns";
-import { Profile } from "@/lib/api/profile/model";
+import { RegionalSettingsSection } from "../regional-settings-section";
+import { useProfile } from "@/lib/api/profile/hook";
+import { useMe } from "@/lib/api/me/hook";
+import { PageLoadingState } from "../page-loading-state";
 
-type ContentPreferencesProperties = {
-    profileData: Profile;
-};
+export function ContentPreferences() {
+    const { data: me, isLoading: userLoading } = useMe();
 
-export function ContentPreferences({ profileData }: ContentPreferencesProperties) {
+    const { data: profile, isLoading: profileLoading } = useProfile(me?.id);
+
+    if (userLoading || profileLoading) return <PageLoadingState />;
+
+    if (!profile) return;
+
     return (
         <Tabs defaultValue="preferences" className="space-y-4">
             <TabsList className="grid w-full grid-cols-3">
@@ -39,7 +46,7 @@ export function ContentPreferences({ profileData }: ContentPreferencesProperties
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Industry</Label>
-                                <Select value={profileData.industry}>
+                                <Select value={profile.industry}>
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
@@ -55,7 +62,7 @@ export function ContentPreferences({ profileData }: ContentPreferencesProperties
 
                             <div className="space-y-2">
                                 <Label>Experience Level</Label>
-                                <Select value={profileData.experience}>
+                                <Select value={profile.experience}>
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
@@ -72,10 +79,10 @@ export function ContentPreferences({ profileData }: ContentPreferencesProperties
                         <div className="space-y-2">
                             <Label>Professional Bio</Label>
                             <Textarea
-                                value={profileData.bio}
+                                value={profile.bio}
                                 onChange={(e) =>
                                     console.log({
-                                        ...profileData,
+                                        ...profile,
                                         bio: e.target.value,
                                     })
                                 }
@@ -87,10 +94,10 @@ export function ContentPreferences({ profileData }: ContentPreferencesProperties
                         <div className="space-y-2">
                             <Label>Target Audience</Label>
                             <Input
-                                value={profileData.targetAudience}
+                                value={profile.targetAudience}
                                 onChange={(e) =>
                                     console.log({
-                                        ...profileData,
+                                        ...profile,
                                         targetAudience: e.target.value,
                                     })
                                 }
@@ -101,20 +108,21 @@ export function ContentPreferences({ profileData }: ContentPreferencesProperties
                         <div className="space-y-3">
                             <Label>Content Focus Areas</Label>
                             <div className="flex flex-wrap gap-2">
-                                {profileData.contentFocus.map((focus, index) => (
+                                {profile.contentFocus.map((focus, index) => (
                                     <Badge key={index} variant="secondary" className="text-xs">
                                         {focus}
                                         <span className="ml-1 cursor-pointer">×</span>
                                     </Badge>
                                 ))}
                                 <AddFocusAreaDialog
-                                    currentFocusAreas={profileData.contentFocus}
+                                    currentFocusAreas={profile.contentFocus}
                                     onAddFocusArea={() => {}}
                                 />
                             </div>
                         </div> */}
                     </CardContent>
                 </Card>
+                <RegionalSettingsSection />
             </TabsContent>
 
             <TabsContent value="themes">

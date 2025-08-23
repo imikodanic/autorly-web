@@ -14,40 +14,55 @@ export function useProfile(userId?: string) {
                 .select("*")
                 .eq("id", userId)
                 .single();
-
             if (error) throw error;
 
-            return data;
+            const profile: Profile = {
+                id: data.id,
+                industry: data.industry,
+                experience: data.experience,
+                bio: data.bio,
+                targetAudience: data.target_audience,
+                country: data.country,
+                timezone: data.timezone,
+                language: data.language,
+            };
+            return profile;
         },
+        staleTime: 30_000,
     });
 }
+
+type UpdateProfileInput = Partial<Omit<Profile, "created_at">>;
 
 export function useUpdateProfile() {
     const supabase = useSupabase();
     const qc = useQueryClient();
+
     return useMutation({
-        mutationFn: async (payload: Profile) => {
+        mutationFn: async (payload: UpdateProfileInput) => {
+            const { id, ...rest } = payload;
+
+            const patch = {
+                industry: rest.industry,
+                experience: rest.experience,
+                bio: rest.bio,
+                target_audience: rest.targetAudience,
+                country: rest.country,
+                timezone: rest.timezone,
+                language: rest.language,
+            };
+
             const { data, error } = await supabase
                 .from("profiles")
-                .update(payload)
-                .eq("id", payload.id)
+                .update(patch)
+                .eq("id", id)
                 .select()
                 .single();
             if (error) throw error;
             return data;
         },
-        // Optimistic update
-        onMutate: async (payload) => {
-            await qc.cancelQueries({ queryKey: qk.profile(payload.id) });
-            const prev = qc.getQueryData(qk.profile(payload.id));
-            qc.setQueryData(qk.profile(payload.id), (old: Profile) => ({ ...old, ...payload }));
-            return { prev };
-        },
-        onError: (_e, p, ctx) => {
-            if (ctx?.prev) qc.setQueryData(qk.profile(p.id), ctx.prev);
-        },
-        onSettled: (_d, _e, payload) => {
-            qc.invalidateQueries({ queryKey: qk.profile(payload.id) });
+        onSuccess: (_row, vars) => {
+            qc.invalidateQueries({ queryKey: qk.profile(vars.id) });
         },
     });
 }
