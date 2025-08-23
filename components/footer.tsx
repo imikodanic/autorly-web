@@ -121,14 +121,14 @@ export function Footer() {
                 <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
                     <p className="text-gray-400 text-sm">© 2024 Autorly. All rights reserved.</p>
                     <div className="flex gap-6 text-sm text-gray-400 mt-4 md:mt-0">
-                        <Link href="#" className="hover:text-white transition-colors">
+                        <Link href="/privacy-policy" className="hover:text-white transition-colors">
                             Privacy Policy
                         </Link>
-                        <Link href="#" className="hover:text-white transition-colors">
+                        <Link
+                            href="/terms-of-service"
+                            className="hover:text-white transition-colors"
+                        >
                             Terms of Service
-                        </Link>
-                        <Link href="#" className="hover:text-white transition-colors">
-                            Cookie Policy
                         </Link>
                     </div>
                 </div>
