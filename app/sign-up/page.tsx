@@ -13,8 +13,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import Link from "next/link";
 import { signup } from "@/app/sign-up/actions";
+import { createClient } from "@/utils/supabase/client";
 
 export default function SignUpPage() {
+    const supabase = createClient();
+
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         email: "",
@@ -28,6 +31,24 @@ export default function SignUpPage() {
     };
 
     const isFormValid = formData.email && formData.password && formData.agreeToTerms;
+
+    const handleGoogle = async () => {
+        const redirectTo = `${window.location.origin}/auth/callback?next=/dashboard`;
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo,
+                queryParams: {
+                    access_type: "offline", // try to obtain a refresh_token
+                    prompt: "consent", // forces consent screen for refresh_token on subsequent logins
+                },
+            },
+        });
+        if (error) {
+            // show a toast or inline error
+            console.error(error.message);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
@@ -70,6 +91,7 @@ export default function SignUpPage() {
                                 variant="outline"
                                 className="w-full h-12 bg-transparent"
                                 size="lg"
+                                onClick={handleGoogle}
                             >
                                 <Mail className="mr-2 h-5 w-5" />
                                 Continue with Google
