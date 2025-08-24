@@ -87,7 +87,7 @@ export default function SchedulePage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-4">
+            {/* <div className="grid gap-4 md:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Scheduled Today</CardTitle>
@@ -131,7 +131,7 @@ export default function SchedulePage() {
                         <p className="text-xs text-muted-foreground">Posts per week</p>
                     </CardContent>
                 </Card>
-            </div>
+            </div> */}
 
             {/* View Controls */}
             <div className="flex items-center justify-between">
