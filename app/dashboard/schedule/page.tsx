@@ -6,21 +6,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarView } from "@/components/calendar-view";
-import { ScheduledPostCard } from "@/components/scheduled-post-card";
-import { SchedulePostDialog } from "@/components/schedule-post-dialog";
 import { format, addDays, startOfWeek, endOfWeek } from "date-fns";
 import { useLinkedInPosts } from "@/lib/api/linkedin-posts/hook";
 import { LinkedInPost } from "@/lib/api/linkedin-posts/model";
+import { PostCard } from "@/components/post-card";
+import { useMe } from "@/lib/api/me/hook";
+import { PageLoadingState } from "@/components/page-loading-state";
+import { LinkedInNotConnectedState } from "@/components/linkedin-not-connected-state";
 
 export default function SchedulePage() {
+    const getMe = useMe();
+
     const getPosts = useLinkedInPosts();
-    const posts: LinkedInPost[] = getPosts.data ?? [];
+    const posts: LinkedInPost[] =
+        getPosts.data?.filter((post: LinkedInPost) => post.status !== "draft") ?? [];
 
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState<"month" | "week" | "list">("month");
-    const [selectedPosts, setSelectedPosts] = useState(posts);
-    const [showScheduleDialog, setShowScheduleDialog] = useState(false);
-    const [selectedPost, setSelectedPost] = useState<string | null>(null);
 
     const handlePreviousPeriod = () => {
         if (viewMode === "month") {
@@ -38,29 +40,6 @@ export default function SchedulePage() {
         }
     };
 
-    const handleSchedulePost = (postId: string, scheduledFor: Date) => {
-        setSelectedPosts((posts) =>
-            posts.map((post) =>
-                post.id === postId ? { ...post, scheduledFor, status: "scheduled" as const } : post
-            )
-        );
-    };
-
-    const handlePreviewPost = (postId: string) => {
-        setSelectedPost(postId);
-    };
-
-    const handleEditPost = (postId: string) => {
-        setSelectedPost(postId);
-        setShowScheduleDialog(true);
-    };
-
-    const handleDeletePost = (postId: string) => {
-        if (confirm("Are you sure you want to delete this scheduled post?")) {
-            setSelectedPosts((posts) => posts.filter((post) => post.id !== postId));
-        }
-    };
-
     const getDateRangeText = () => {
         if (viewMode === "month") {
             return format(currentDate, "MMMM yyyy");
@@ -71,6 +50,16 @@ export default function SchedulePage() {
         }
         return "";
     };
+
+    if (getPosts.isLoading || getMe.isLoading) {
+        return <PageLoadingState />;
+    }
+
+    const me = getMe.data; // me: Me | null | undefined (depending on your hook typing)
+
+    if (!me || !me.linkedinAccount) {
+        return <LinkedInNotConnectedState />;
+    }
 
     return (
         <div className="flex-1 space-y-6 p-6">
@@ -197,54 +186,33 @@ export default function SchedulePage() {
             >
                 <div className="space-y-6">
                     <TabsContent value="month" className="mt-0">
-                        <CalendarView
-                            currentDate={currentDate}
-                            posts={selectedPosts}
-                            onPreviewPost={handlePreviewPost}
-                            onEditPost={handleEditPost}
-                            onDeletePost={handleDeletePost}
-                        />
+                        <CalendarView currentDate={currentDate} posts={posts} />
                     </TabsContent>
 
                     <TabsContent value="week" className="mt-0">
-                        <CalendarView
-                            currentDate={currentDate}
-                            posts={selectedPosts}
-                            viewMode="week"
-                            onPreviewPost={handlePreviewPost}
-                            onEditPost={handleEditPost}
-                            onDeletePost={handleDeletePost}
-                        />
+                        <CalendarView currentDate={currentDate} posts={posts} viewMode="week" />
                     </TabsContent>
 
                     <TabsContent value="list" className="mt-0">
                         <div className="space-y-4">
-                            {selectedPosts
+                            {posts
                                 .sort(
                                     (a, b) =>
                                         new Date(a.scheduled_at ?? "").getTime() -
                                         new Date(b.scheduled_at ?? "").getTime()
                                 )
                                 .map((post) => (
-                                    <ScheduledPostCard
+                                    <PostCard
                                         key={post.id}
+                                        hideActions
+                                        user={me.linkedinAccount}
                                         post={post}
-                                        onPreview={() => handlePreviewPost(post.id)}
-                                        onEdit={() => handleEditPost(post.id)}
-                                        onDelete={() => handleDeletePost(post.id)}
                                     />
                                 ))}
                         </div>
                     </TabsContent>
                 </div>
             </Tabs>
-
-            <SchedulePostDialog
-                open={showScheduleDialog}
-                onOpenChange={setShowScheduleDialog}
-                postId={selectedPost}
-                onSchedule={handleSchedulePost}
-            />
         </div>
     );
 }

@@ -2,14 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
+
 import {
     format,
     startOfMonth,
@@ -27,19 +20,9 @@ interface CalendarViewProps {
     currentDate: Date;
     posts: LinkedInPost[];
     viewMode?: "month" | "week";
-    onPreviewPost: (postId: string) => void;
-    onEditPost: (postId: string) => void;
-    onDeletePost: (postId: string) => void;
 }
 
-export function CalendarView({
-    currentDate,
-    posts,
-    viewMode = "month",
-    onPreviewPost,
-    onEditPost,
-    onDeletePost,
-}: CalendarViewProps) {
+export function CalendarView({ currentDate, posts, viewMode = "month" }: CalendarViewProps) {
     const getCalendarDays = () => {
         if (viewMode === "week") {
             const start = startOfWeek(currentDate);
@@ -94,7 +77,7 @@ export function CalendarView({
                                         <div
                                             key={post.id}
                                             className="bg-blue-50 border border-blue-200 rounded p-2 text-xs cursor-pointer hover:bg-blue-100"
-                                            onClick={() => onPreviewPost(post.id)}
+                                            onClick={() => console.log(post.id)}
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span className="font-medium text-blue-700">
@@ -103,41 +86,6 @@ export function CalendarView({
                                                         "HH:mm"
                                                     )}
                                                 </span>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger
-                                                        asChild
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-4 w-4 p-0"
-                                                        >
-                                                            <MoreHorizontal className="h-3 w-3" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem
-                                                            onClick={() => onPreviewPost(post.id)}
-                                                        >
-                                                            <Eye className="mr-2 h-3 w-3" />
-                                                            Preview
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem
-                                                            onClick={() => onEditPost(post.id)}
-                                                        >
-                                                            <Edit className="mr-2 h-3 w-3" />
-                                                            Edit
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem
-                                                            onClick={() => onDeletePost(post.id)}
-                                                            className="text-red-600"
-                                                        >
-                                                            <Trash2 className="mr-2 h-3 w-3" />
-                                                            Delete
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
                                             </div>
                                             <p className="text-blue-600 truncate mt-1">
                                                 {post.content.substring(0, 30)}...
@@ -205,7 +153,7 @@ export function CalendarView({
                                         <div
                                             key={post.id}
                                             className="bg-blue-50 border border-blue-200 rounded p-1 text-xs cursor-pointer hover:bg-blue-100"
-                                            onClick={() => onPreviewPost(post.id)}
+                                            onClick={() => console.log(post.id)}
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span className="font-medium text-blue-700">
@@ -214,41 +162,6 @@ export function CalendarView({
                                                         "HH:mm"
                                                     )}
                                                 </span>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger
-                                                        asChild
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-4 w-4 p-0"
-                                                        >
-                                                            <MoreHorizontal className="h-3 w-3" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem
-                                                            onClick={() => onPreviewPost(post.id)}
-                                                        >
-                                                            <Eye className="mr-2 h-3 w-3" />
-                                                            Preview
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem
-                                                            onClick={() => onEditPost(post.id)}
-                                                        >
-                                                            <Edit className="mr-2 h-3 w-3" />
-                                                            Edit
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem
-                                                            onClick={() => onDeletePost(post.id)}
-                                                            className="text-red-600"
-                                                        >
-                                                            <Trash2 className="mr-2 h-3 w-3" />
-                                                            Delete
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
                                             </div>
                                             <p className="text-blue-600 truncate">
                                                 {post.content.substring(0, 20)}...

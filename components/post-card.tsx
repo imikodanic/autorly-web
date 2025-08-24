@@ -19,13 +19,14 @@ interface PostCardProps {
     post: LinkedInPost;
     onEdit?: (postId: string) => void;
     onDelete?: (postId: string) => void;
+    hideActions?: boolean;
     user: {
         avatar_url: string;
         display_name: string;
     };
 }
 
-export function PostCard({ post, onEdit, onDelete, user }: PostCardProps) {
+export function PostCard({ post, onEdit, onDelete, user, hideActions }: PostCardProps) {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const getStatusBadge = () => {
         switch (post.status) {
@@ -102,16 +103,18 @@ export function PostCard({ post, onEdit, onDelete, user }: PostCardProps) {
                         </div>
                         <div className="flex items-center gap-2">
                             {getStatusBadge()}
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm">
-                                        <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    {getAvailableActions()}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            {!hideActions && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="sm">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        {getAvailableActions()}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
                         </div>
                     </div>
                 </CardHeader>
