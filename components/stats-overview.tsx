@@ -73,11 +73,11 @@ export function StatsOverview({ posts }: StatsOverviewProps) {
                             {stat.value}
                         </div>
                         <p className="text-xs text-muted-foreground">{stat.description}</p>
-                        <p
+                        {/* <p
                             className={`text-xs mt-1 ${stat.comingSoon ? "text-orange-600 font-medium" : "text-green-600"}`}
                         >
                             {stat.trend}
-                        </p>
+                        </p> */}
                     </CardContent>
                 </Card>
             ))}
