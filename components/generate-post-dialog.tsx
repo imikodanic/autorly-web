@@ -163,7 +163,13 @@ export function GeneratePostDialog({
     const minuteOptions = ["00", "15", "30", "45"];
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog
+            open={open}
+            onOpenChange={(isOpen) => {
+                handleClose();
+                onOpenChange(isOpen);
+            }}
+        >
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
