@@ -5,9 +5,12 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { useMe } from "@/lib/api/me/hook";
 
 export function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const { data: me } = useMe();
 
     return (
         <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
@@ -48,14 +51,19 @@ export function Header() {
 
                     {/* Desktop CTA */}
                     <div className="hidden md:flex items-center gap-4">
-                        <Button asChild variant="ghost" className="text-gray-600">
-                            <Link href="/login">Login</Link>
-                        </Button>
+                        {!me?.id && (
+                            <Button asChild variant="ghost" className="text-gray-600">
+                                <Link href="/login">Login</Link>
+                            </Button>
+                        )}
+
                         <Button
                             asChild
                             className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
                         >
-                            <Link href="/sign-up">Start for Free</Link>
+                            <Link href={me?.id ? "/dashboard" : "/sign-up"}>
+                                {me?.id ? "View Dashboard" : "Start for Free"}
+                            </Link>
                         </Button>
                     </div>
 
