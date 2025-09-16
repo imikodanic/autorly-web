@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Play, Sparkles, Zap, Clock } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
