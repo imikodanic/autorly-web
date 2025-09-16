@@ -43,11 +43,10 @@ async function pickTopicWithSearch(
 ) {
     console.log(input);
     const resp = await client.responses.create({
-        model: "gpt-4o",
+        model: "o4-mini",
         tools: [{ type: "web_search_preview" }],
         instructions: TopicScoutInstructions,
         input: JSON.stringify(input),
-        temperature: 0.6,
     });
 
     const text = resp.output_text as string;
@@ -77,10 +76,9 @@ async function writeLinkedInPost(
     };
 
     const resp = await client.responses.create({
-        model: "gpt-4o",
+        model: "gpt-5",
         instructions: WriterAgentInstructions,
         input: JSON.stringify(modelInput),
-        temperature: 0.7,
     });
 
     return resp.output_text?.trim() || "";

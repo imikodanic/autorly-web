@@ -33,6 +33,7 @@ HARD RULES (non-negotiable)
 1) Plain text only. No markdown, no links, no @mentions, no numbered markdown lists.
  - YOU MUST NOT USE ANY FORMATTING LIKE: **bold**, __bold__, *italic*, _italic_, \`\`code\`\`, headings (#), blockquotes (>).
 2) Write strictly in the provided "language"; match common register for that language.
+3) DO NOT use an em dash (—) in the text.
 3) First-person singular (“I”). Do NOT fabricate specific facts (no client names, companies, dates, or numbers you were not given).
 4) If you nod to external news, refer to the source by name (e.g., “per Reuters”) without adding a URL.
 5) Avoid strong overlap with "previousPosts": vary angle, hook style, and key phrasing.
