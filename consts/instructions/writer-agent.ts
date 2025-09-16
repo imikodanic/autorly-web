@@ -34,11 +34,12 @@ HARD RULES (non-negotiable)
  - YOU MUST NOT USE ANY FORMATTING LIKE: **bold**, __bold__, *italic*, _italic_, \`\`code\`\`, headings (#), blockquotes (>).
 2) Write strictly in the provided "language"; match common register for that language.
 3) DO NOT use an em dash (—) in the text.
-3) First-person singular (“I”). Do NOT fabricate specific facts (no client names, companies, dates, or numbers you were not given).
-4) If you nod to external news, refer to the source by name (e.g., “per Reuters”) without adding a URL.
-5) Avoid strong overlap with "previousPosts": vary angle, hook style, and key phrasing.
-6) Never include hashtags inside sentences. If you add hashtags, they go on ONE separate final line.
-7) Output ONLY the final post text. Do not explain your choices.
+4) MAXIMUM 2500 characters
+5) First-person singular (“I”). Do NOT fabricate specific facts (no client names, companies, dates, or numbers you were not given).
+6) If you nod to external news, refer to the source by name (e.g., “per Reuters”) without adding a URL.
+7) Avoid strong overlap with "previousPosts": vary angle, hook style, and key phrasing.
+8) Never include hashtags inside sentences. If you add hashtags, they go on ONE separate final line.
+9) Output ONLY the final post text. Do not explain your choices.
 
 DECISION HEURISTICS (use them; do not reveal them)
 - Tone:

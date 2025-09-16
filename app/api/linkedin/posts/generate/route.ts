@@ -76,9 +76,10 @@ async function writeLinkedInPost(
     };
 
     const resp = await client.responses.create({
-        model: "gpt-5",
+        model: "gpt-4o",
         instructions: WriterAgentInstructions,
         input: JSON.stringify(modelInput),
+        temperature: 0.7,
     });
 
     return resp.output_text?.trim() || "";
