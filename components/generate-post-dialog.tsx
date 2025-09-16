@@ -1,7 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Sparkles, Calendar, Clock, Save, Send, Edit3, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+    Sparkles,
+    Calendar,
+    Clock,
+    Save,
+    Send,
+    Edit3,
+    Loader2,
+    CheckCircle,
+    Bot,
+    PenTool,
+    Search,
+} from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -47,9 +59,9 @@ export function GeneratePostDialog({
     initialContent = "",
     postStatus, // Added postStatus prop
 }: GeneratePostDialogProps) {
-    const [step, setStep] = useState<"input" | "preview" | "schedule">(
-        isEditMode ? "preview" : "input"
-    );
+    type Step = "input" | "generating" | "preview" | "schedule";
+
+    const [step, setStep] = useState<Step>(isEditMode ? "preview" : "input");
     const [prompt, setPrompt] = useState("");
     const [contentMode, setContentMode] = useState<"user" | "autorly">("user");
     const [isGenerating, setIsGenerating] = useState(false);
@@ -61,6 +73,9 @@ export function GeneratePostDialog({
     const [selectedMinute, setSelectedMinute] = useState("00");
     const [selectedPeriod, setSelectedPeriod] = useState<"AM" | "PM">("AM");
 
+    // Abort controller to allow cancel while generating
+    const abortRef = useRef<AbortController | null>(null);
+
     useEffect(() => {
         if (isEditMode && initialContent) {
             setGeneratedContent(initialContent);
@@ -71,24 +86,69 @@ export function GeneratePostDialog({
         }
     }, [isEditMode, initialContent]);
 
-    const handleGenerate = async () => {
-        setIsGenerating(true);
-
-        const response = await fetch("/api/linkedin/posts/generate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                topic: prompt,
-            }),
-        });
-
-        const { data } = await response.json();
-
-        setGeneratedContent(data.content);
+    const resetState = () => {
+        setStep(isEditMode ? "preview" : "input");
+        setPrompt("");
+        setContentMode("user");
+        if (!isEditMode) setGeneratedContent("");
+        setIsEditing(false);
+        setSelectedDate(undefined);
+        setSelectedHour("9");
+        setSelectedMinute("00");
+        setSelectedPeriod("AM");
         setIsGenerating(false);
-        setStep("preview");
+        if (abortRef.current) {
+            abortRef.current.abort();
+            abortRef.current = null;
+        }
+    };
+
+    const handleGenerate = async () => {
+        // Guard: user mode needs a prompt
+        if (contentMode === "user" && !prompt.trim()) return;
+
+        setIsGenerating(true);
+        setStep("generating");
+
+        const controller = new AbortController();
+        abortRef.current = controller;
+
+        try {
+            const response = await fetch("/api/linkedin/posts/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                signal: controller.signal,
+                body: JSON.stringify({
+                    // If Autorly decides, you can send empty or a flag; adjust backend if needed
+                    topic: contentMode === "autorly" ? "" : prompt,
+                    mode: contentMode, // optional: helps your API know which flow
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to generate: ${response.status}`);
+            }
+
+            const { data } = await response.json();
+
+            setGeneratedContent(data.content ?? "");
+            setStep("preview");
+        } catch {
+            setStep("preview");
+        } finally {
+            setIsGenerating(false);
+            abortRef.current = null;
+        }
+    };
+
+    const handleCancelGeneration = () => {
+        if (abortRef.current) {
+            abortRef.current.abort();
+            abortRef.current = null;
+        }
+        setIsGenerating(false);
+        // Go back to input so user can adjust
+        setStep("input");
     };
 
     const handlePublishNow = () => {
@@ -101,19 +161,12 @@ export function GeneratePostDialog({
         handleClose();
     };
 
-    const handleScheduleClick = () => {
-        setStep("schedule");
-    };
-
     const handleScheduleConfirm = () => {
         if (!selectedDate) return;
 
         let hours = Number.parseInt(selectedHour);
-        if (selectedPeriod === "PM" && hours !== 12) {
-            hours += 12;
-        } else if (selectedPeriod === "AM" && hours === 12) {
-            hours = 0;
-        }
+        if (selectedPeriod === "PM" && hours !== 12) hours += 12;
+        else if (selectedPeriod === "AM" && hours === 12) hours = 0;
 
         const scheduledDateTime = new Date(selectedDate);
         scheduledDateTime.setHours(hours, Number.parseInt(selectedMinute), 0, 0);
@@ -130,21 +183,10 @@ export function GeneratePostDialog({
 
     const handleClose = () => {
         onOpenChange(false);
-        setStep(isEditMode ? "preview" : "input");
-        setPrompt("");
-        setContentMode("user");
-        if (!isEditMode) {
-            setGeneratedContent("");
-        }
-        setIsEditing(false);
-        setSelectedDate(undefined);
-        setSelectedHour("9");
-        setSelectedMinute("00");
-        setSelectedPeriod("AM");
+        resetState();
     };
 
     const handleSave = () => {
-        // Added handleSave function
         if (onSave) {
             onSave(generatedContent);
             handleClose();
@@ -159,7 +201,6 @@ export function GeneratePostDialog({
     ];
 
     const hourOptions = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
-
     const minuteOptions = ["00", "15", "30", "45"];
 
     return (
@@ -175,11 +216,16 @@ export function GeneratePostDialog({
                     <DialogTitle className="flex items-center gap-2">
                         <Sparkles className="h-5 w-5 text-blue-600" />
                         {step === "input" && "Generate LinkedIn Post"}
+                        {step === "generating" && "Generating Your Post"}
                         {step === "preview" && (isEditMode ? "Edit Your Post" : "Review Your Post")}
                         {step === "schedule" && "Schedule Your Post"}
                     </DialogTitle>
                     <DialogDescription>
                         {step === "input" && "Choose how you want to create your LinkedIn post"}
+                        {step === "generating" &&
+                            (contentMode === "autorly"
+                                ? "Autorly is handling everything for you…"
+                                : "We’re turning your topic into a compelling post…")}
                         {step === "preview" &&
                             (isEditMode
                                 ? "Edit your post content and choose what to do next"
@@ -189,6 +235,7 @@ export function GeneratePostDialog({
                     </DialogDescription>
                 </DialogHeader>
 
+                {/* INPUT STEP */}
                 {step === "input" && (
                     <div className="space-y-6">
                         <div className="space-y-4">
@@ -206,12 +253,20 @@ export function GeneratePostDialog({
                                     <div className="flex items-start gap-3">
                                         <div>
                                             <div
-                                                className={`font-medium ${contentMode === "user" ? "text-blue-900" : "text-gray-900"}`}
+                                                className={`font-medium ${
+                                                    contentMode === "user"
+                                                        ? "text-blue-900"
+                                                        : "text-gray-900"
+                                                }`}
                                             >
                                                 I&apos;ll provide a topic
                                             </div>
                                             <div
-                                                className={`text-sm mt-1 ${contentMode === "user" ? "text-blue-700" : "text-gray-600"}`}
+                                                className={`text-sm mt-1 ${
+                                                    contentMode === "user"
+                                                        ? "text-blue-700"
+                                                        : "text-gray-600"
+                                                }`}
                                             >
                                                 Tell us what you want to post about and we&apos;ll
                                                 help you create engaging content
@@ -235,12 +290,20 @@ export function GeneratePostDialog({
                                     <div className="flex items-start gap-3">
                                         <div>
                                             <div
-                                                className={`font-medium ${contentMode === "autorly" ? "text-blue-900" : "text-gray-900"}`}
+                                                className={`font-medium ${
+                                                    contentMode === "autorly"
+                                                        ? "text-blue-900"
+                                                        : "text-gray-900"
+                                                }`}
                                             >
                                                 Let Autorly decide
                                             </div>
                                             <div
-                                                className={`text-sm mt-1 ${contentMode === "autorly" ? "text-blue-700" : "text-gray-600"}`}
+                                                className={`text-sm mt-1 ${
+                                                    contentMode === "autorly"
+                                                        ? "text-blue-700"
+                                                        : "text-gray-600"
+                                                }`}
                                             >
                                                 Give us complete control to choose the topic and
                                                 create engaging content for you
@@ -284,6 +347,23 @@ export function GeneratePostDialog({
                     </div>
                 )}
 
+                {/* GENERATING STEP */}
+                {step === "generating" && (
+                    <div className="space-y-6">
+                        <GenerationProgress contentMode={contentMode} />
+                        <div className="flex gap-2">
+                            <Button
+                                variant="outline"
+                                className="flex-1 bg-transparent"
+                                onClick={handleCancelGeneration}
+                            >
+                                Cancel
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
+                {/* PREVIEW STEP */}
                 {step === "preview" && (
                     <div className="space-y-6">
                         <div className="space-y-4">
@@ -327,7 +407,7 @@ export function GeneratePostDialog({
                                 Publish Now
                             </Button>
                             <Button
-                                onClick={handleScheduleClick}
+                                onClick={() => setStep("schedule")}
                                 variant="outline"
                                 className="flex-1 bg-transparent"
                             >
@@ -357,6 +437,7 @@ export function GeneratePostDialog({
                     </div>
                 )}
 
+                {/* SCHEDULE STEP */}
                 {step === "schedule" && (
                     <div className="space-y-6">
                         <div className="space-y-2">
@@ -480,5 +561,174 @@ export function GeneratePostDialog({
                 )}
             </DialogContent>
         </Dialog>
+    );
+}
+
+function GenerationProgress({ contentMode }: { contentMode: "user" | "autorly" }) {
+    const [currentStep, setCurrentStep] = useState(0);
+    const [progress, setProgress] = useState(0);
+
+    const steps =
+        contentMode === "autorly"
+            ? [
+                  {
+                      icon: Search,
+                      label: "Searching for ideas",
+                      description: "Analyzing trending topics...",
+                  },
+                  {
+                      icon: Sparkles,
+                      label: "Finding the perfect angle",
+                      description: "Crafting your unique perspective...",
+                  },
+                  {
+                      icon: PenTool,
+                      label: "Writing your post",
+                      description: "Creating engaging content...",
+                  },
+                  {
+                      icon: CheckCircle,
+                      label: "Finalizing content",
+                      description: "Adding finishing touches...",
+                  },
+              ]
+            : [
+                  {
+                      icon: Sparkles,
+                      label: "Analyzing your topic",
+                      description: "Understanding your message...",
+                  },
+                  {
+                      icon: PenTool,
+                      label: "Writing your post",
+                      description: "Creating engaging content...",
+                  },
+                  {
+                      icon: CheckCircle,
+                      label: "Finalizing content",
+                      description: "Adding finishing touches...",
+                  },
+              ];
+
+    useEffect(() => {
+        const totalDuration = 60000; // 1 minute
+        const progressInterval = 50; // Update every 50ms for smooth animation
+
+        const interval = setInterval(() => {
+            setProgress((prev) => {
+                const newProgress = prev + (progressInterval / totalDuration) * 100;
+
+                // Update current step based on progress
+                const newStep = Math.min(
+                    Math.floor((newProgress / 100) * steps.length),
+                    steps.length - 1
+                );
+                setCurrentStep(newStep);
+
+                return Math.min(newProgress, 100);
+            });
+        }, progressInterval);
+
+        return () => clearInterval(interval);
+    }, [steps.length]);
+
+    return (
+        <div className="space-y-6 py-8">
+            {/* Progress Bar */}
+            <div className="relative">
+                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                        className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300 ease-out"
+                        style={{ width: `${progress}%` }}
+                    />
+                </div>
+                <div className="text-center mt-2 text-sm text-gray-600">
+                    {Math.round(progress)}% Complete
+                </div>
+            </div>
+
+            {/* Steps Timeline */}
+            <div className="space-y-4">
+                {steps.map((step, index) => {
+                    const StepIcon = step.icon;
+                    const isActive = index === currentStep;
+                    const isCompleted = index < currentStep;
+
+                    return (
+                        <div
+                            key={index}
+                            className={`flex items-center gap-4 p-4 rounded-lg transition-all duration-500 ${
+                                isActive
+                                    ? "bg-blue-50 border-2 border-blue-200"
+                                    : isCompleted
+                                      ? "bg-green-50 border-2 border-green-200"
+                                      : "bg-gray-50 border-2 border-gray-200"
+                            }`}
+                        >
+                            <div
+                                className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                    isActive
+                                        ? "bg-blue-500 text-white animate-pulse"
+                                        : isCompleted
+                                          ? "bg-green-500 text-white"
+                                          : "bg-gray-300 text-gray-600"
+                                }`}
+                            >
+                                <StepIcon className="h-5 w-5" />
+                            </div>
+
+                            <div className="flex-1">
+                                <div
+                                    className={`font-medium transition-colors duration-300 ${
+                                        isActive
+                                            ? "text-blue-900"
+                                            : isCompleted
+                                              ? "text-green-900"
+                                              : "text-gray-600"
+                                    }`}
+                                >
+                                    {step.label}
+                                </div>
+                                <div
+                                    className={`text-sm transition-colors duration-300 ${
+                                        isActive
+                                            ? "text-blue-700"
+                                            : isCompleted
+                                              ? "text-green-700"
+                                              : "text-gray-500"
+                                    }`}
+                                >
+                                    {isActive
+                                        ? step.description
+                                        : isCompleted
+                                          ? "Completed"
+                                          : "Waiting..."}
+                                </div>
+                            </div>
+
+                            {isActive && (
+                                <div className="flex-shrink-0">
+                                    <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                                </div>
+                            )}
+
+                            {isCompleted && (
+                                <div className="flex-shrink-0">
+                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* Autorly Branding */}
+            <div className="text-center">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-sm font-medium">
+                    <Bot className="h-4 w-4" />
+                    Autorly AI at work
+                </div>
+            </div>
+        </div>
     );
 }
