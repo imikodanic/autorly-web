@@ -4,6 +4,7 @@ import { ArrowRight, Play, Sparkles, Zap, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
     return (
@@ -51,21 +52,24 @@ export function Hero() {
                         {/* CTA Buttons */}
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Button
+                                asChild
                                 size="lg"
                                 className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-lg px-8 py-6"
                             >
-                                Start Free Trial
-                                <ArrowRight className="ml-2 h-5 w-5" />
+                                <Link href="/sign-up">
+                                    Start for Free
+                                    <ArrowRight className="ml-2 h-5 w-5" />
+                                </Link>
                             </Button>
 
-                            <Button
+                            {/* <Button
                                 size="lg"
                                 variant="outline"
                                 className="text-lg px-8 py-6 border-2 hover:bg-gray-50 bg-transparent"
                             >
                                 <Play className="mr-2 h-5 w-5" />
                                 Watch Demo
-                            </Button>
+                            </Button> */}
                         </div>
 
                         {/* Trust Indicators */}

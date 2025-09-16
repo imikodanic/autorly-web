@@ -1,5 +1,6 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function CTA() {
     return (
@@ -18,12 +19,15 @@ export function CTA() {
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <Button
+                            asChild
                             size="lg"
                             className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-6"
                         >
-                            <Sparkles className="mr-2 h-5 w-5" />
-                            Join Beta Program
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            <Link href="/sign-up">
+                                <Sparkles className="mr-2 h-5 w-5" />
+                                Join Beta Program
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                            </Link>
                         </Button>
 
                         <div className="text-blue-200 text-sm">

@@ -28,7 +28,7 @@ export function Footer() {
                                 <Linkedin className="h-5 w-5" />
                             </Link>
                             <Link
-                                href="mailto:imikodanic@gmail.com"
+                                href="mailto:ivan@autorly.com"
                                 className="text-gray-400 hover:text-white transition-colors"
                             >
                                 <Mail className="h-5 w-5" />
@@ -45,12 +45,12 @@ export function Footer() {
                                     Features
                                 </Link>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link href="#" className="hover:text-white transition-colors">
                                     Pricing
                                 </Link>
-                            </li>
-                            <li>
+                            </li> */}
+                            {/* <li>
                                 <Link href="#" className="hover:text-white transition-colors">
                                     API
                                 </Link>
@@ -59,7 +59,7 @@ export function Footer() {
                                 <Link href="#" className="hover:text-white transition-colors">
                                     Integrations
                                 </Link>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
 
