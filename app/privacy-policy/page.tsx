@@ -126,7 +126,21 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Contact Us</h2>
+                        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                            7. Company Information
+                        </h2>
+                        <div className="space-y-4 text-gray-700">
+                            <p>
+                                Autorly is owned and operated by HIPOIC, a company incorporated and
+                                located in Croatia. All services provided through Autorly are
+                                delivered by HIPOIC in accordance with Croatian and applicable
+                                international laws and regulations.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Contact Us</h2>
                         <div className="space-y-4 text-gray-700">
                             <p>
                                 If you have any questions about this Privacy Policy, please contact

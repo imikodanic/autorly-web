@@ -181,7 +181,21 @@ export default function TermsOfService() {
 
                     <section>
                         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                            10. Contact Information
+                            10. Company Information
+                        </h2>
+                        <div className="space-y-4 text-gray-700">
+                            <p>
+                                Autorly is owned and operated by HIPOIC, a company incorporated and
+                                located in Croatia. These terms of service are governed by Croatian
+                                law, and any disputes arising from your use of our services will be
+                                subject to the jurisdiction of Croatian courts.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                            11. Contact Information
                         </h2>
                         <div className="space-y-4 text-gray-700">
                             <p>For questions about these Terms of Service, please contact us at:</p>
